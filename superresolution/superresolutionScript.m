@@ -21,16 +21,16 @@ D = sparse(rows,cols,vals,MD*ND,M*N);
 % (the low resolution thingy
 g = reshape(D*im(:),M/SRfactor,N/SRfactor);
 
-lambda = 1000;
+lambda = 100;
 
 uG = superresolution_Dummy(g,D,lambda);
 nearest = imresize(g,[M N],'nearest');
 
-%figure(2,2);
+figure;
 % top left: reconstructed thing
 % top right: diff to nearest
 % bot left: original image
 % bot right: upsampled img using "nearest" operator
-disp = [4*uG, 10*(4*uG - nearest) ...
+disp = [uG, 5*(uG - im).^2; ...
         im, nearest ];
 imshow(disp);
