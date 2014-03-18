@@ -1,0 +1,97 @@
+\documentclass{paper}
+
+%\usepackage{times}
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{color}
+
+
+% load package with ``framed'' and ``numbered'' option.
+%\usepackage[framed,numbered,autolinebreaks,useliterate]{mcode}
+
+% something NOT relevant to the usage of the package.
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{18pt}
+
+
+
+
+
+
+\usepackage[latin1]{inputenc} 
+\usepackage[T1]{fontenc} 
+
+\usepackage{listings} 
+\lstset{% 
+   language=Matlab, 
+   basicstyle=\small\ttfamily, 
+} 
+
+
+
+\title{Assignment 1}
+
+
+
+\author{Name Surname\\Matriculation number}
+% //////////////////////////////////////////////////
+
+
+\begin{document}
+
+
+
+\maketitle
+
+
+% Add figures:
+%\begin{figure}[t]
+%%\begin{center}
+%\quad\quad   \includegraphics[width=1\linewidth]{ass2}
+%%\end{center}
+%
+%\label{fig:performance}
+%\end{figure}
+
+\section*{Superresolution}
+
+\begin{enumerate}
+\item \textbf{Problem.} Briefly describe the problem.
+\item \textbf{Motivations.} Describe the reasons and motivations behind this problem.
+\item \textbf{Derivation of gradient.} In this section you should:
+
+\begin{itemize}
+\item Write the finite difference approximation of the objective function $E$.
+\item Compute the gradient of the objective function $\nabla_uE$.  
+\end{itemize}
+
+
+\item \textbf{Implement gradient descent for superresolution.} In this section you should:
+
+\begin{itemize}
+\item Show some images, as the the gradient method progresses iteration by iteration. Display the initial and the final image and 3 more images in between.
+\end{itemize}
+
+\item \textbf{Show images obtained by very high, very low and optimal $\lambda$.} In this section you should:
+
+\begin{itemize}
+\item Display 3 images with different $\lambda$ (very low, very high and optimal).
+\item Describe the effect of $\lambda$ on the solution.
+\end{itemize}
+
+\item \textbf{ Find optimal $\lambda$.} In this section you should:
+
+\begin{itemize}
+\item Display the $SSD$ vs. $\lambda$ graph.
+\item Describe the effect of $\lambda$ with respect to the $SSD$ between the ground truth and the solution image.
+\end{itemize}
+
+
+\end{enumerate}
+
+
+ \end{document}
+ 
+ 
