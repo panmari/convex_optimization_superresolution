@@ -28,7 +28,7 @@
 
 
 
-\title{Assignment 1 - Superresolution}
+\title{Assignment 1}
 
 
 
@@ -52,7 +52,9 @@
 %\label{fig:performance}
 %\end{figure}
 
-\section{Problem}
+\section*{Superresolution}
+
+\subsection*{Problem}
 Through various effects, an image may end up with a low resolution. 
 This can be due to hardware limitations 
 (e. g. an image taken from a cheap security camera), 
@@ -60,16 +62,53 @@ bandwith limitations
 (e. g. an image was downscaled for transmitting over a connection with very low bandwith) or others.  
 
 
-\section{Motivation}
+\subsection*{Motivation}
 To retrieve further details, we might now want to increase image quality by increasing its resolution. 
 While this is not possible in a manner as depicted in \href{http://petapixel.com/2012/08/17/ridiculous-photo-enhancement-scene-from-the-tv-show-csi/}{popular TV series}, 
 we can make certain assumptions for regularization combined with convex optimization to increase quality by a fair amount. 
 In this project use a regularization term that penalizes high gradients,
 assuming that the original image largely consists of smooth patches.
 
-\section{Derivation of Gradient}
+\subsection*{Derivation of Gradient}
 \begin{equation}
-\min_{u \in X} \norm{\nabla u}_1 + \frac{\lambda}{2} \norm{Du - g}^2_2
+E(u) = \norm{\nabla u} + \frac{\lambda}{2} \norm{Du - g}^2_2
+\end{equation}
+
+Gradient
+
+The fitting term on the right can be derived pretty easily using the chain rule for derivation.
+\begin{align}
+\frac{\partial E(u)}{\partial u} 
+&= \norm{\nabla u} + \frac{\lambda}{2} (Du - g)^T(Du - g) \frac{\partial}{\partial u} \\
+&= \norm{\nabla u} \frac{\partial}{\partial u} + D^T D u - D^T g
+\end{align}
+
+The regularization term however needs some more work. 
+For this purpose we first discretize the norm of the gradient as
+\begin{equation}
+\norm{\nabla u} \approx \sum_{i,j} \sqrt{(u[i+1,j] + u[i,j])^2 + (u[i, j+1] - u[i, j])^2}
+\end{equation}
+One single term of this sum can then be expressed as
+\begin{equation}
+\tau[i,j] = \sqrt{(u[i+1,j] + u[i,j])^2 + (u[i, j+1] - u[i, j])^2}
+\end{equation}
+Using these tools, we can now easily define the derivation of the regularization term as
+\begin{equation}
+\frac{\partial \norm{\nabla u}}{\partial u[i,j]} = 
+	\frac{\partial \tau[i,j]}{\partial u[i,j]} +
+	\frac{\partial \tau[i - 1,j]}{\partial u[i,j]} +
+	\frac{\partial \tau[i,j - 1]}{\partial u[i,j]}
+\end{equation}
+With all other terms being independent of $u[i,j]$ and thus being zero.
+These three expressions can now be computed as
+\begin{equation}
+\frac{\partial \tau[i,j]}{\partial u[i,j]} = 
+	\frac{2u[i,j] - u[i + 1, j] - u[i, j+1]}{\tau[i,j]}
+\end{equation}
+
+Interestingly, all square roots are eliminated in this process.
+\begin{equation}
+\min_{u \in X} \norm{\nabla u} + \frac{\lambda}{2} \norm{Du - g}^2_2
 \end{equation}
 
 Discretized 
@@ -82,7 +121,7 @@ Finite gradient:
 TODO: show that chain rule does eliminate square root.
 
 \begin{equation}
-\nabla E[i] = 2 (2u[i] - u[i + 1] - u[i - 1]) + \lambda(Du[i] - g[i])
+\nabla E[i] = 2 (2u[i] - u[i + 1] - u[i - 1]) + \lambda D[i,i] u[i] (Du[i] - g[i])
 \end{equation}
 \begin{enumerate}
 \item \textbf{Derivation of gradient.} In this section you should:
