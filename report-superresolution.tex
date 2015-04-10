@@ -132,13 +132,20 @@ respectively
 &= &&\frac{u[i,j] - u[i, j - 1]}{\tau[i, j-1]}
 \end{align}
 
-Interestingly, all square roots are eliminated in this process.
+The $\tau$ terms need additional care, since they appear in the denominator
+of the fractions. To prevent division by zero and increase numerical 
+stability, we add we approximate them as 
+\begin{equation}
+\tilde{\tau}[i,j] = \sqrt{(u[i+1,j] - u[i,j])^2 + (u[i, j+1] - u[i, j])^2 + \delta}
+\end{equation}
+with $\delta$ being a small positive number.
 \begin{equation}
 \min_{u \in X} \norm{\nabla u} + \frac{\lambda}{2} \norm{Du - g}^2_2
 \end{equation}
 
 Discretized 
-\begin{equation}
+\begin{equation}\tau[i,j] = \sqrt{(u[i+1,j] - u[i,j])^2 + (u[i, j+1] - u[i, j])^2}
+
 \min_{u} \sum_{i=1}^{N-1} \norm{u[i+1] - u[i]}_2 + 
 \frac{\lambda}{2} \sum_{i=1}^{N-1} (Du[i] - g[i])^2
 \end{equation}
