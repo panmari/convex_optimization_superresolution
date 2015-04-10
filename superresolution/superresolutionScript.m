@@ -2,8 +2,12 @@
 %clear all;
 close all;
 %clc;
-
-im = im2double( rgb2gray( imread('fruits.png') ) );
+im = imread('fruits.png');
+%im = imread('grass_small.png');
+if size(im, 3) == 3
+    im = rgb2gray( im );
+end
+im = im2double(im);
 SRfactor = 2;
 
 % build SRfactor x SRfactor downsample operator
@@ -21,12 +25,15 @@ D = sparse(rows,cols,vals,MD*ND,M*N);
 % (the low resolution thingy)
 g = reshape(D*im(:),M/SRfactor,N/SRfactor);
 
-lambdas = [0.001, 0.1, 1, 50:50:800];
+lambdas = [0.1, 1, 100:200:2000];
+lambdas = 100:50:1000;
+
 errors = zeros(size(lambdas));
+nearest = imresize(g,[M N],'nearest');
+
 for i = 1:length(lambdas)
     lambda = lambdas(i);
     [uG, iterations, costs] = superresolution_sm(g,D,lambda);
-    nearest = imresize(g,[M N],'nearest');
 
     %figure;
     title(['Resize factor: ', num2str(SRfactor)]);
