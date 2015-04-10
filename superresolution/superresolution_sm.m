@@ -1,4 +1,4 @@
-function [u, i] = superresolution_sm(g,D,lambda)
+function [u, i, costs] = superresolution_sm(g,D,lambda)
 % input: g: double gray scaled image
 %        D: downscaling matrix
 % lambda: parameter % output: u: inpainted image
@@ -11,16 +11,14 @@ DEBUG=false;
 SRfactor = sqrt(MND/MN);
 M = MD / SRfactor;
 N = ND / SRfactor;
-u = D'*g(:); % initial guess for solution u
 DTg = D' * g(:); % Precomputed here instead of in every iteration.
-t = 0.01;
+u = DTg; % initial guess for solution u
+t = 0.001;
 max_iterations = 3000;
-gradient_norms = zeros(max_iterations,1);
+costs = zeros(max_iterations,1);
 delta = 0.000001;
 
 for i=1:max_iterations
-    u = reshape(u, M,N);
-    % only gradient in x direction so far...
     % Pad u direction by 2 into every direction.
     u_pad = padarray(u, [2 2], 'symmetric', 'both'); 
     
@@ -37,14 +35,15 @@ for i=1:max_iterations
     % Derivative of 1/2 || Du - g ||^2
     grad_fitting_term = D' * D * u(:) - DTg;
 
-    gradient_e = regularization_term(:) + lambda*grad_fitting_term(:);
+    gradient_e = regularization_term + lambda*grad_fitting_term;
     % Update u
-    u = u(:) - gradient_e*t;
+    u = u - gradient_e*t;
     
-    gradient_norms(i) = norm(gradient_e);
-    if i > 500
-      gradient_norm_ratio = gradient_norms(i) / gradient_norms(i - 1);
-      if (gradient_norm_ratio > 0.9999)
+    costs(i) = sum(tau(:)) + lambda/2 * norm(D*u(:) - g(:));
+    if i > 10
+      costs_ratio = costs(i) / costs(i - 1);
+      if (costs_ratio > 0.9999)
+          costs = costs(1:i);
           break;
       end
     end

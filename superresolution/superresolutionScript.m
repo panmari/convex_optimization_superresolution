@@ -21,14 +21,14 @@ D = sparse(rows,cols,vals,MD*ND,M*N);
 % (the low resolution thingy)
 g = reshape(D*im(:),M/SRfactor,N/SRfactor);
 
-lambdas = [0.001, 0.1, 1, 10 100 1000];
+lambdas = [0.001, 0.1, 1, 50:50:800];
 errors = zeros(size(lambdas));
 for i = 1:length(lambdas)
     lambda = lambdas(i);
-    [uG, iterations] = superresolution_sm(g,D,lambda);
+    [uG, iterations, costs] = superresolution_sm(g,D,lambda);
     nearest = imresize(g,[M N],'nearest');
 
-    figure;
+    %figure;
     title(['Resize factor: ', num2str(SRfactor)]);
     % top left: reconstructed thing
     % top right: upsampled img using "nearest" operator
@@ -42,5 +42,6 @@ for i = 1:length(lambdas)
                         10 * error, im];
     imshow(displayed_images);
 end
-
-loglog(lambdas, errors);
+%% Visualize error under different lambdas
+error_nearest = (nearest - im).^2;
+loglog(lambdas, errors, lambdas, repmat(sum(error_nearest(:)), size(errors)));
