@@ -6,19 +6,16 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{color}
+\usepackage{hyperref}
 
 
 % load package with ``framed'' and ``numbered'' option.
 %\usepackage[framed,numbered,autolinebreaks,useliterate]{mcode}
 
 % something NOT relevant to the usage of the package.
-\setlength{\parindent}{0pt}
+\setlength{\parindent}{0pt}	
 \setlength{\parskip}{18pt}
-
-
-
-
-
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
 
 \usepackage[latin1]{inputenc} 
 \usepackage[T1]{fontenc} 
@@ -31,11 +28,11 @@
 
 
 
-\title{Assignment 1}
+\title{Assignment 1 - Superresolution}
 
 
 
-\author{Name Surname\\Matriculation number}
+\author{Moser Stefan\\09-277-013}
 % //////////////////////////////////////////////////
 
 
@@ -55,11 +52,39 @@
 %\label{fig:performance}
 %\end{figure}
 
-\section*{Superresolution}
+\section{Problem}
+Through various effects, an image may end up with a low resolution. 
+This can be due to hardware limitations 
+(e. g. an image taken from a cheap security camera), 
+bandwith limitations 
+(e. g. an image was downscaled for transmitting over a connection with very low bandwith) or others.  
 
+
+\section{Motivation}
+To retrieve further details, we might now want to increase image quality by increasing its resolution. 
+While this is not possible in a manner as depicted in \href{http://petapixel.com/2012/08/17/ridiculous-photo-enhancement-scene-from-the-tv-show-csi/}{popular TV series}, 
+we can make certain assumptions for regularization combined with convex optimization to increase quality by a fair amount. 
+In this project use a regularization term that penalizes high gradients,
+assuming that the original image largely consists of smooth patches.
+
+\section{Derivation of Gradient}
+\begin{equation}
+\min_{u \in X} \norm{\nabla u}_1 + \frac{\lambda}{2} \norm{Du - g}^2_2
+\end{equation}
+
+Discretized 
+\begin{equation}
+\min_{u} \sum_{i=1}^{N-1} \norm{u[i+1] - u[i]}_2 + 
+\frac{\lambda}{2} \sum_{i=1}^{N-1} (Du[i] - g[i])^2
+\end{equation}
+
+Finite gradient:
+TODO: show that chain rule does eliminate square root.
+
+\begin{equation}
+\nabla E[i] = 2 (2u[i] - u[i + 1] - u[i - 1]) + \lambda(Du[i] - g[i])
+\end{equation}
 \begin{enumerate}
-\item \textbf{Problem.} Briefly describe the problem.
-\item \textbf{Motivations.} Describe the reasons and motivations behind this problem.
 \item \textbf{Derivation of gradient.} In this section you should:
 
 \begin{itemize}
