@@ -86,11 +86,12 @@ The fitting term on the right can be derived pretty easily using the chain rule 
 The regularization term however needs some more work. 
 For this purpose we first discretize the norm of the gradient as
 \begin{equation}
-\norm{\nabla u} \approx \sum_{i,j} \sqrt{(u[i+1,j] + u[i,j])^2 + (u[i, j+1] - u[i, j])^2}
+\norm{\nabla u} \approx \sum_{i,j} 
+	\sqrt{(u[i+1,j] - u[i,j])^2 + (u[i, j+1] - u[i, j])^2}
 \end{equation}
 One single term of this sum can then be expressed as
 \begin{equation}
-\tau[i,j] = \sqrt{(u[i+1,j] + u[i,j])^2 + (u[i, j+1] - u[i, j])^2}
+\tau[i,j] = \sqrt{(u[i+1,j] - u[i,j])^2 + (u[i, j+1] - u[i, j])^2}
 \end{equation}
 Using these tools, we can now easily define the derivation of the regularization term as
 \begin{equation}
@@ -101,10 +102,20 @@ Using these tools, we can now easily define the derivation of the regularization
 \end{equation}
 With all other terms being independent of $u[i,j]$ and thus being zero.
 These three expressions can now be computed as
-\begin{equation}
-\frac{\partial \tau[i,j]}{\partial u[i,j]} = 
-	\frac{2u[i,j] - u[i + 1, j] - u[i, j+1]}{\tau[i,j]}
-\end{equation}
+\begin{align}
+\frac{\partial \tau[i,j]}{\partial u[i,j]} 
+&= &&\frac{\partial \sqrt{(u[i+1,j] - u[i,j])^2 + (u[i, j+1] - u[i, j])^2}}{\partial u[i,j]} \\
+&= &&\frac{1}{2} ((u[i+1,j] - u[i,j])^2 + (u[i, j+1] - u[i, j])^2)^{-\frac{1}{2}} \\
+& &&\frac{\partial}{\partial u[i,j]} 
+(u[i+1,j] - u[i,j])^2 + (u[i, j+1] - u[i, j])^2 \\
+&= &&\frac{1}{2}\tau[i,j]^{-1} \\
+& &&\frac{\partial}{\partial u[i,j]} 
+(u[i+1,j] - u[i,j])^2 + (u[i, j+1] - u[i, j])^2 \\
+&= &&\frac{1}{2}\tau[i,j]^{-1}
+(-2(u[i + 1, j] - u[i,j]) - 2(u[i, j+1] - u[i,j])) \\
+&= &&\tau[i,j]^{-1} (2 u[i,j] -u[i + 1, j] - u[i, j+1]) \\
+&= &&\frac{2u[i,j] - u[i + 1, j] - u[i, j+1]}{\tau[i,j]}
+\end{align}
 
 Interestingly, all square roots are eliminated in this process.
 \begin{equation}
