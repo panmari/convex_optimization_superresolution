@@ -70,19 +70,39 @@ In this project use a regularization term that penalizes high gradients,
 assuming that the original image largely consists of smooth patches.
 
 \subsection*{Derivation of Gradient}
+
+The energy term we want to optimize in this problem is 
 \begin{equation}
-E(u) = \norm{\nabla u} + \frac{\lambda}{2} \norm{Du - g}^2_2
+E(u) = \norm{\nabla u} + \frac{\lambda}{2} \norm{Du - g}^2_2.
 \end{equation}
+The left summand we will further call regularisation term, 
+the right one fitting term. 
 
-Gradient
+The regularisation term consists only of the gradient
+of the superresolution image $u$, conserving the smoothness of the image.
+While any norm would be acceptable, I chose the 2-norm for its nice
+mathematical properties.
 
-The fitting term on the right can be derived pretty easily using the chain rule for derivation.
+The fitting term consists of the channel selector $D$, 
+the superresolution image $u$ and the initial image $g$ (with low resultion).
+This term ensures that the optimum
+\begin{equation}
+\tilde{u} = \min_{u \in X} E(u) = \min_{u \in X} \norm{\nabla u} + \frac{\lambda}{2} \norm{Du - g}^2_2
+\end{equation}
+stays close to the initial
+image when applying the channel selector. 
+
+The fitting term on the right can be derived pretty easily using the chain rule
 \begin{align}
 \frac{\partial E(u)}{\partial u} 
 &= \norm{\nabla u} + \frac{\lambda}{2} (Du - g)^T(Du - g) \frac{\partial}{\partial u} \\
 &= \norm{\nabla u} \frac{\partial}{\partial u} + D^T D u - D^T g
 \end{align}
-
+by expressing the images $u$ and $g$ as vectors. For further use, we define
+this term as 
+\begin{equation}
+ f = D^T D u - D^T g
+\end{equation}
 The regularization term however needs some more work. 
 For this purpose we first discretize the norm of the gradient as
 \begin{equation}
@@ -93,7 +113,7 @@ One single term of this sum can then be expressed as
 \begin{equation}
 \tau[i,j] = \sqrt{(u[i+1,j] - u[i,j])^2 + (u[i, j+1] - u[i, j])^2}
 \end{equation}
-Using these tools, we can now easily define the derivation of the regularization term as
+Using these tools, we can now easily define the gradient of the regularization term in a single component as
 \begin{equation}
 \frac{\partial \norm{\nabla u}}{\partial u[i,j]} = 
 	\frac{\partial \tau[i,j]}{\partial u[i,j]} +
@@ -139,31 +159,18 @@ stability, we add we approximate them as
 \tilde{\tau}[i,j] = \sqrt{(u[i+1,j] - u[i,j])^2 + (u[i, j+1] - u[i, j])^2 + \delta}
 \end{equation}
 with $\delta$ being a small positive number.
-\begin{equation}
-\min_{u \in X} \norm{\nabla u} + \frac{\lambda}{2} \norm{Du - g}^2_2
-\end{equation}
 
-Discretized 
-\begin{equation}\tau[i,j] = \sqrt{(u[i+1,j] - u[i,j])^2 + (u[i, j+1] - u[i, j])^2}
+Combining our efforts from before, we can express the gradient of the objective function as
+\begin{align}
+\nabla E[i] = &\frac{u[i,j] - u[i-1, j]}{\tilde{\tau}[i - 1, j]} + \\
+	&\frac{u[i,j] - u[i, j - 1]}{\tilde{\tau}[i, j-1]} + \\
+	&\frac{u[i,j] - u[i, j - 1]}{\tilde{\tau}[i, j-1]} + \\
+	&f[i]
+\end{align}
 
-\min_{u} \sum_{i=1}^{N-1} \norm{u[i+1] - u[i]}_2 + 
-\frac{\lambda}{2} \sum_{i=1}^{N-1} (Du[i] - g[i])^2
-\end{equation}
+\subsection*{Implementation}
 
-Finite gradient:
-TODO: show that chain rule does eliminate square root.
-
-\begin{equation}
-\nabla E[i] = 2 (2u[i] - u[i + 1] - u[i - 1]) + \lambda D[i,i] u[i] (Du[i] - g[i])
-\end{equation}
 \begin{enumerate}
-\item \textbf{Derivation of gradient.} In this section you should:
-
-\begin{itemize}
-\item Write the finite difference approximation of the objective function $E$.
-\item Compute the gradient of the objective function $\nabla_uE$.  
-\end{itemize}
-
 
 \item \textbf{Implement gradient descent for superresolution.} In this section you should:
 
