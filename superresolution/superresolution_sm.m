@@ -16,34 +16,35 @@ DTg = D' * g(:); % Precomputed here instead of in every iteration.
 t = 0.01;
 max_iterations = 3000;
 gradient_norms = zeros(max_iterations,1);
+delta = 0.000001;
 
 for i=1:max_iterations
     u = reshape(u, M,N);
     % only gradient in x direction so far...
-    % 2*u(x,y) - u(x, y + 1) - u(x, y - 1) 
-    grad_reg_term_x = 2*(2*u(:,:) - [u(:,2:end) u(:, end - 1)] - [u(:,2) u(:,1:end-1)]);
-    grad_reg_term_y = 2*(2*u(:,:) - [u(2:end,:); u(end - 1,:)] - [u(2,:); u(1:end-1,:)]);
-    grad_reg_term = grad_reg_term_x + grad_reg_term_y;
+    % Pad u direction by 2 into every direction.
+    u_pad = padarray(u, [2 2], 'symmetric', 'both'); 
+    
+    tau_sqr = (u_pad(3:end,2:end-1) - u_pad(2:end-1,2:end-1)).^2 + ...
+        (u_pad(2:end-1,3:end) - u_pad(2:end-1,2:end-1)).^2;
+    tau = (tau_sqr + delta).^(1/2);
+
+    reg_term1 = (2*u(:,:) - u_pad(4:end-1, 3:end-2) - u_pad(3:end-2, 4:end-1))./ tau(2:end-1, 2:end-1);
+    reg_term2 = (u(:,:) - u_pad(2:end-3, 3:end-2)) ./ tau(1:end-2, 2:end-1);
+    reg_term3 = (u(:,:) - u_pad(3:end-2, 2:end-3)) ./ tau(2:end-1, 1:end-2);
+
+    regularization_term = reg_term1 + reg_term2 + reg_term3;
     
     % Derivative of 1/2 || Du - g ||^2
     grad_fitting_term = D' * D * u(:) - DTg;
-    
-    % add up to get gradient of whole energy term
-    if (DEBUG)
-        debug_img(:,:,1) = abs(reshape(grad_reg_term(:), M,N));
-        debug_img(:,:,2) = abs(reshape(lambda*grad_other_term_ext2(:), M,N));
-        debug_img(:,:,3) = zeros(M,N);
-        imtool(3*debug_img);
-    end
 
-    gradient_e = grad_reg_term(:) + lambda*grad_fitting_term(:);
+    gradient_e = regularization_term(:) + lambda*grad_fitting_term(:);
     % Update u
     u = u(:) - gradient_e*t;
     
     gradient_norms(i) = norm(gradient_e);
-    if i > 2
+    if i > 500
       gradient_norm_ratio = gradient_norms(i) / gradient_norms(i - 1);
-      if (gradient_norm_ratio > 0.99)
+      if (gradient_norm_ratio > 0.9999)
           break;
       end
     end
