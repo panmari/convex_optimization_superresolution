@@ -116,6 +116,21 @@ These three expressions can now be computed as
 &= &&\tau[i,j]^{-1} (2 u[i,j] -u[i + 1, j] - u[i, j+1]) \\
 &= &&\frac{2u[i,j] - u[i + 1, j] - u[i, j+1]}{\tau[i,j]}
 \end{align}
+In a similar fashion, we can compute the partial derivatives for
+$\tau[i-1, j]$ and $\tau[i, j - 1]$
+\begin{align}
+\frac{\partial \tau[i - 1,j]}{\partial u[i,j]} 
+&= &&\frac{\partial \sqrt{(u[i,j] - u[i-1,j])^2 + (u[i-1, j+1] - u[i-1, j])^2}}{\partial u[i,j]} \\
+&= &&\frac{1}{2} \cdot \frac{1}{\tau[i - 1, j]} \cdot 2 \cdot (u[i,j] - u[i-1, j]) \\
+&= &&\frac{u[i,j] - u[i-1, j]}{\tau[i - 1, j]}
+\end{align}
+respectively
+\begin{align}
+\frac{\partial \tau[i,j-1]}{\partial u[i,j]} 
+&= &&\frac{\partial \sqrt{(u[i + 1 ,j] - u[i,j - 1])^2 + (u[i, j] - u[i, j - 1])^2}}{\partial u[i,j]} \\
+&= &&\frac{1}{2} \cdot \frac{1}{\tau[i, j - 1]} \cdot 2 \cdot (u[i,j] - u[i, j-1]) \\
+&= &&\frac{u[i,j] - u[i, j - 1]}{\tau[i, j-1]}
+\end{align}
 
 Interestingly, all square roots are eliminated in this process.
 \begin{equation}
