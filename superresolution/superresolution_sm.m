@@ -82,7 +82,8 @@ for i=1:max_iterations
     gradient_e = regularization_term(:) + lambda*grad_fitting_term;
     % Update u
     u = u(:) - gradient_e*t;
-       
+    
+    % Compute costs and break if change is too little, not used.
     costs(i) = sum(tau(:)) + lambda/2 * norm(D*u(:) - g(:));
 %     if i > 10
 %       costs_ratio = costs(i) / costs(i - 1);
