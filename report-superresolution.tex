@@ -3,11 +3,12 @@
 %\usepackage{times}
 \usepackage{epsfig}
 \usepackage{graphicx}
+\graphicspath{{superresolution/}{superresolution/output/}}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{color}
 \usepackage{hyperref}
-
+\usepackage[tight,footnotesize]{subfigure}
 
 % load package with ``framed'' and ``numbered'' option.
 %\usepackage[framed,numbered,autolinebreaks,useliterate]{mcode}
@@ -25,8 +26,6 @@
    language=Matlab, 
    basicstyle=\small\ttfamily, 
 } 
-
-
 
 \title{Assignment 1}
 
@@ -170,32 +169,57 @@ Combining our efforts from before, we can express the gradient of the objective 
 
 \subsection*{Implementation}
 
-\begin{enumerate}
+\subsubsection*{Iteration count}
+In my implementation, I used $Dg$ as initial guess. While around 5000 iterations
+seemed to be enough in most cases, I went up to 10'000 iterations to be sure there
+is no misleading effect due to low iteration count.
 
-\item \textbf{Implement gradient descent for superresolution.} In this section you should:
+\begin{figure}[ht!]%
+\centering
+\subfigure[0 Iterations]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_700_iteration_0.png}}
+\subfigure[1000 Iterations]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_700_iteration_1000.png}}
+\subfigure[2000 Iterations]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_700_iteration_2000.png}} \\
+\subfigure[4000 Iterations]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_700_iteration_4000.png}} 
+\subfigure[6000 Iterations]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_700_iteration_6000.png}} 
+\subfigure[8000 Iterations]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_700_iteration_8000.png}} 
+\caption{The superresolution image after various iteration counts.
+Iteration 0 shows the initial guess. After iteration 4000 there are only
+minor changes. The lambda was set to 700 for these images.}
+\label{fig:iteration_count}
+\end{figure}
 
-\begin{itemize}
-\item Show some images, as the the gradient method progresses iteration by iteration. Display the initial and the final image and 3 more images in between.
-\end{itemize}
+\subsubsection*{Effect of Lambda}
+As can be seen in Figure \ref{fig:lambdas}, the lambda defines the smoothness
+of the resulting image. 
+Surprisingly, 
+the quality only deteriorates with extremely large lambdas. 
+The choose of lambda also impacts the choose of the learning rate: 
+With a large lambda, the learning rate has to be lowered in order for the
+optimization to not become unstable.
+\begin{figure}[ht!]%
+\centering
+\subfigure[$\lambda = 10$]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_10_iteration_8000.png}}
+\subfigure[$\lambda = 100$]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_50_iteration_8000.png}}
+\subfigure[$\lambda = 200$]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_200_iteration_8000.png}} \\
+\subfigure[$\lambda = 500$]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_500_iteration_8000.png}} 
+\subfigure[$\lambda = 700$]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_700_iteration_8000.png}} 
+\subfigure[$\lambda = 1000$]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_1000_iteration_8000.png}} 
+\caption{Various resulting images with different lambdas after 8000 iterations.}
+\label{fig:lambdas}
+\end{figure}
 
-\item \textbf{Show images obtained by very high, very low and optimal $\lambda$.} In this section you should:
+\subsubsection*{Optimal Lambda}
+\begin{figure}[ht!]%
+\centering
+\includegraphics[width=0.9\textwidth]{lambda_vs_ssd.png}
+\caption{Various resulting images with different lambdas after 8000 iterations.}
+\label{fig:lambda_vs_ssd}
+\end{figure}
+I tested a wide variety of lambdas before concluding that the optimal lambda
+is somewhere around 4000 (see Figure \ref{fig:lambda_vs_ssd}). The improvements above a lambda
+of 1000 are marginal however. As already stated above, the results don't become
+much worse when choosing even larger lambdas.
 
-\begin{itemize}
-\item Display 3 images with different $\lambda$ (very low, very high and optimal).
-\item Describe the effect of $\lambda$ on the solution.
-\end{itemize}
-
-\item \textbf{ Find optimal $\lambda$.} In this section you should:
-
-\begin{itemize}
-\item Display the $SSD$ vs. $\lambda$ graph.
-\item Describe the effect of $\lambda$ with respect to the $SSD$ between the ground truth and the solution image.
-\end{itemize}
-
-
-\end{enumerate}
-
-
- \end{document}
+\end{document}
  
  
