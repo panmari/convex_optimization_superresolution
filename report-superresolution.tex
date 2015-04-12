@@ -58,14 +58,13 @@ Through various effects, an image may end up with a low resolution.
 This can be due to hardware limitations 
 (e. g. an image taken from a cheap security camera), 
 bandwith limitations 
-(e. g. an image was downscaled for transmitting over a connection with very low bandwith) or others.  
-
+(e. g. an image was downscaled for transmitting over a connection with very low bandwith) or others.
 
 \subsection*{Motivation}
 To retrieve further details, we might now want to increase image quality by increasing its resolution. 
 While this is not possible in a manner as depicted in \href{http://petapixel.com/2012/08/17/ridiculous-photo-enhancement-scene-from-the-tv-show-csi/}{popular TV series}, 
-we can make certain assumptions for regularization combined with convex optimization to increase quality by a fair amount. 
-In this project use a regularization term that penalizes high gradients,
+we can make certain assumptions for regularization combined with convex optimization to increase quality of upscaling compared to a naive implementation by a fair amount. 
+In this project we use a regularization term that penalizes high gradients,
 assuming that the original image largely consists of smooth patches.
 
 \subsection*{Derivation of Gradient}
@@ -74,7 +73,7 @@ The energy term we want to optimize in this problem is
 \begin{equation}
 E(u) = \norm{\nabla u} + \frac{\lambda}{2} \norm{Du - g}^2_2.
 \end{equation}
-The left summand we will further call regularisation term, 
+The left summand we will call regularisation term from here on, 
 the right one fitting term. 
 
 The regularisation term consists only of the gradient
@@ -83,7 +82,7 @@ While any norm would be acceptable, I chose the 2-norm for its nice
 mathematical properties.
 
 The fitting term consists of the channel selector $D$, 
-the superresolution image $u$ and the initial image $g$ (with low resultion).
+the superresolution image $u$ and the initial image $g$ (with low resolution).
 This term ensures that the optimum
 \begin{equation}
 \tilde{u} = \min_{u \in X} E(u) = \min_{u \in X} \norm{\nabla u} + \frac{\lambda}{2} \norm{Du - g}^2_2
@@ -91,10 +90,11 @@ This term ensures that the optimum
 stays close to the initial
 image when applying the channel selector. 
 
-The fitting term on the right can be derived pretty easily using the chain rule
+The gradient of the fitting term on the right can be derived pretty easily using the chain rule
 \begin{align}
 \frac{\partial E(u)}{\partial u} 
-&= \norm{\nabla u} + \frac{\lambda}{2} (Du - g)^T(Du - g) \frac{\partial}{\partial u} \\
+&= \norm{\nabla u}\frac{\partial}{\partial u} + 
+\frac{\lambda}{2} (Du - g)^T(Du - g) \frac{\partial}{\partial u} \\
 &= \norm{\nabla u} \frac{\partial}{\partial u} + D^T D u - D^T g
 \end{align}
 by expressing the images $u$ and $g$ as vectors. For further use, we define
@@ -151,9 +151,8 @@ respectively
 &= &&\frac{u[i,j] - u[i, j - 1]}{\tau[i, j-1]}
 \end{align}
 
-The $\tau$ terms need additional care, since they appear in the denominator
-of the fractions. To prevent division by zero and increase numerical 
-stability, we add we approximate them as 
+The $\tau$ terms need additional care, since they appear in the denominator. To prevent division by zero and increase numerical 
+stability, we approximate them as 
 \begin{equation}
 \tilde{\tau}[i,j] = \sqrt{(u[i+1,j] - u[i,j])^2 + (u[i, j+1] - u[i, j])^2 + \delta}
 \end{equation}
@@ -161,8 +160,8 @@ with $\delta$ being a small positive number.
 
 Combining our efforts from before, we can express the gradient of the objective function as
 \begin{align}
-\nabla E[i] = &\frac{u[i,j] - u[i-1, j]}{\tilde{\tau}[i - 1, j]} + \\
-	&\frac{u[i,j] - u[i, j - 1]}{\tilde{\tau}[i, j-1]} + \\
+\nabla E[i] = &\frac{2u[i,j] - u[i + 1, j] - u[i, j+1]}{\tau[i,j]} + \\
+	&\frac{u[i,j] - u[i - 1, j]}{\tilde{\tau}[i - 1, j]} + \\
 	&\frac{u[i,j] - u[i, j - 1]}{\tilde{\tau}[i, j-1]} + \\
 	&f[i]
 \end{align}
@@ -183,7 +182,7 @@ is no misleading effect due to low iteration count.
 \subfigure[6000 Iterations]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_700_iteration_6000.png}} 
 \subfigure[8000 Iterations]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_700_iteration_8000.png}} 
 \caption{The superresolution image after various iteration counts.
-Iteration 0 shows the initial guess. After iteration 4000 there are only
+0 iterations shows the initial guess. After iteration 4000 there are only
 minor changes. The lambda was set to 700 for these images.}
 \label{fig:iteration_count}
 \end{figure}
@@ -193,31 +192,34 @@ As can be seen in Figure \ref{fig:lambdas}, the lambda defines the smoothness
 of the resulting image. 
 Surprisingly, 
 the quality only deteriorates with extremely large lambdas. 
-The choose of lambda also impacts the choose of the learning rate: 
+The choice of lambda also impacts the choice of the learning rate: 
 With a large lambda, the learning rate has to be lowered in order for the
 optimization to not become unstable.
 \begin{figure}[ht!]%
 \centering
 \subfigure[$\lambda = 10$]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_10_iteration_8000.png}}
-\subfigure[$\lambda = 100$]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_50_iteration_8000.png}}
-\subfigure[$\lambda = 200$]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_200_iteration_8000.png}} \\
-\subfigure[$\lambda = 500$]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_500_iteration_8000.png}} 
-\subfigure[$\lambda = 700$]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_700_iteration_8000.png}} 
-\subfigure[$\lambda = 1000$]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_1000_iteration_8000.png}} 
+\subfigure[$\lambda = 100$]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_100_iteration_8000.png}}
+\subfigure[$\lambda = 1000$]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_1000_iteration_8000.png}} \\
+\subfigure[$\lambda = 2000$]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_2100_iteration_8000.png}} 
+\subfigure[$\lambda = 5000$]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_5100_iteration_8000.png}} 
+\subfigure[$\lambda = 10000$]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_10000_iteration_8000.png}} 
 \caption{Various resulting images with different lambdas after 8000 iterations.}
 \label{fig:lambdas}
 \end{figure}
 
+\clearpage
 \subsubsection*{Optimal Lambda}
 \begin{figure}[ht!]%
 \centering
 \includegraphics[width=0.9\textwidth]{lambda_vs_ssd.png}
-\caption{Various resulting images with different lambdas after 8000 iterations.}
+\caption{SSE for various lambdas after 8000 iterations. For comparison, the
+SSE of the image obtained through nearest-neighbor scaling was added (green line).}
 \label{fig:lambda_vs_ssd}
 \end{figure}
 I tested a wide variety of lambdas before concluding that the optimal lambda
 is somewhere around 4000 (see Figure \ref{fig:lambda_vs_ssd}). The improvements above a lambda
-of 1000 are marginal however. As already stated above, the results don't become
+of 1000 are only marginal however. 
+As already stated above, the results don't become
 much worse when choosing even larger lambdas.
 
 \end{document}
