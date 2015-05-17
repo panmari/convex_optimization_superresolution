@@ -17,7 +17,7 @@
 \setlength{\parindent}{0pt}	
 \setlength{\parskip}{18pt}
 \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
-
+\newcommand{\twonorm}[1]{\left\lVert#1\right\rVert_2}
 \usepackage[latin1]{inputenc} 
 \usepackage[T1]{fontenc} 
 
@@ -78,13 +78,28 @@ and solve it instead. All needed conditions are met:
 \item $G = \frac{\lambda}{2}\norm{ D\cdot - g}^2$ is a convex function
 \item $K = \nabla \cdot$ is a linear operator
 \end{itemize}
-\subsubsection{Legendre Fenchel Transform of TV term}
-Since $F$ only appears as it's conjugate function $F^*$ in Equation \ref{eq:dual_energy}, we need to compute it first.
+\subsubsection*{Legendre Fenchel Transform of TV term}
+Since $F$ only appears as it's convex conjugate $F^*$ in Equation \ref{eq:dual_energy}, we need to compute it first.
 \begin{align}
-	F*(y) &= (\norm{\cdot}_2)*(y) \\
-		  &= sup_x x^T y - \norm{x}_2
+	F^*(y) &= (\norm{\cdot}_2)^*(y) \\
+		  &= \sup_x x^T y - \twonorm{x} \\
+		  &= \sup_x x^T y - \max_{\twonorm{z} \leq 1} x^T z \label{eq:cauchy_schwary}\\
+		  &= \sup_x \min_{\twonorm{z} \leq 1} x^T(y-z) \\
+		  &= \begin{cases}
+   				0  			& \text{if} \twonorm{y} \leq 1 \\
+   				\infty      & \text{otherwise}
+  			 \end{cases} \label{eq:cases_F_star}
 \end{align}
+In step \ref{eq:cauchy_schwary} we used the Cauchy-Schwarz inequality
+\begin{equation}
+	\twonorm{x} = \max_{\twonorm{z} \leq 1} x^T z
+\end{equation}
+Further, the result in Equation \ref{eq:cases_F_star} can be derived by seeing that 
+the inner minimum term always will be 0 in the first case, since then z will adapt to be
+equal to y, resulting in the multiplication with a zero vector. If z can not be set equal
+to y, i. e. $\twonorm{y} > 1$, the superior is unbound.
 
+Consequently, the convex conjugate of the two norm is the \emph{unit ball indicator function}.
 \subsection*{Primal-Dual steps}
 Equation \ref{eq:dual_energy} can be solved using Primal-Dual steps. Specifically,
 the following algorithm:
