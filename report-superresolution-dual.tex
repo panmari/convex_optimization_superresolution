@@ -57,7 +57,7 @@
 The energy term we need to minimize for this problem is
 
 \begin{equation}
-E(u) = \frac{\lambda}{2} \norm{Du - g}^2 + \norm{\nabla u} ,
+\min_{u \in U} \norm{\nabla u} + \frac{\lambda}{2} \norm{Du - g}^2
 \label{eq:initial_energy}
 \end{equation}
 with $D$ being the downsampling operator that produces from the high 
@@ -70,9 +70,9 @@ solving Equation \ref{eq:initial_energy} directly, we will derive the primal-dua
 formulation
 \begin{equation}
 \min_{u \in U} \max_{y \in Y} < Ku, y > - F^*(y) + G(u)
+\label{eq:dual_energy}
 \end{equation}
 and solve it instead. All needed conditions are met:
-\label{eq:dual_energy}
 \begin{itemize}
 \item $F = \norm{\cdot}_2$ is a convex function
 \item $G = \frac{\lambda}{2}\norm{ D\cdot - g}^2$ is a convex function
@@ -88,7 +88,8 @@ Since $F$ only appears as it's convex conjugate $F^*$ in Equation \ref{eq:dual_e
 		  &= \begin{cases}
    				0  			& \text{if} \twonorm{y} \leq 1 \\
    				\infty      & \text{otherwise}
-  			 \end{cases} \label{eq:cases_F_star}
+  			 \end{cases} \label{eq:cases_F_star} \\
+  	      &= \delta(y)
 \end{align}
 In step \ref{eq:cauchy_schwary} we used the Cauchy-Schwarz inequality
 \begin{equation}
@@ -99,7 +100,14 @@ the inner minimum term always will be 0 in the first case, since then z will ada
 equal to y, resulting in the multiplication with a zero vector. If z can not be set equal
 to y, i. e. $\twonorm{y} > 1$, the superior is unbound.
 
-Consequently, the convex conjugate of the two norm is the \emph{unit ball indicator function}.
+Consequently, the convex conjugate of the two norm is the \emph{unit ball indicator function}\footnote{1 if inside, $\infty$ if outside}.
+
+We arrive at the Primal-Dual formulation for super resolution by simply putting our
+results so far into Equation \ref{eq:dual_energy}.
+\begin{equation}
+\min_{u \in U} \max_{y \in Y} <\nabla u, y> - \delta(y) + \frac{\lambda}{2}\twonorm{Du - g}^2
+\end{equation}
+
 \subsection*{Primal-Dual steps}
 Equation \ref{eq:dual_energy} can be solved using Primal-Dual steps. Specifically,
 the following algorithm:
