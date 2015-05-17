@@ -54,9 +54,45 @@
 \section*{Superresolution}
 
 \subsection*{Primal Dual formulation}
+The energy term we need to minimize for this problem is
 
-\subsection*{Primal dual steps}
+\begin{equation}
+E(u) = \frac{\lambda}{2} \norm{Du - g}^2 + \norm{\nabla u} ,
+\label{eq:initial_energy}
+\end{equation}
+with $D$ being the downsampling operator that produces from the high 
+resolution image $u$ (of size $M \times N$) a low level resolution image
+(of size $\frac{M}{\alpha} \times \frac{N}{\alpha}$) by multiplying. 
+For all images, we assume that they are given as vectors\footnote{following the flattening conventions of matlabs $(:)$ operator}.
 
+So far, everything is the same as in the previous exercise. But instead of
+solving Equation \ref{eq:initial_energy} directly, we will derive the primal-dual
+formulation
+\begin{equation}
+\min_{u \in U} \max_{y \in Y} < Ku, y > - F^*(y) + G(u)
+\end{equation}
+and solve it instead. All needed conditions are met:
+\label{eq:dual_energy}
+\begin{itemize}
+\item $F = \norm{\cdot}_2$ is a convex function
+\item $G = \frac{\lambda}{2}\norm{ D\cdot - g}^2$ is a convex function
+\item $K = \nabla \cdot$ is a linear operator
+\end{itemize}
+\subsubsection{Legendre Fenchel Transform of TV term}
+Since $F$ only appears as it's conjugate function $F^*$ in Equation \ref{eq:dual_energy}, we need to compute it first.
+\begin{align}
+	F*(y) &= (\norm{\cdot}_2)*(y) \\
+		  &= sup_x x^T y - \norm{x}_2
+\end{align}
+
+\subsection*{Primal-Dual steps}
+Equation \ref{eq:dual_energy} can be solved using Primal-Dual steps. Specifically,
+the following algorithm:
+\begin{align}
+	y^{n+1} &= prox_{\sigma F^*}(y^n + \sigma K \bar{x}^n) \\
+	x^{n+1} &= prox_{\tau G}(x^n + \tau K^* y^{n+1}) \\
+	\bar{x}^{n+1} &= x^{n+1} + \theta(x^{n+1} - x^n)
+\end{align}
 \subsection*{Implementation}
 
 \subsubsection*{Iteration count}
