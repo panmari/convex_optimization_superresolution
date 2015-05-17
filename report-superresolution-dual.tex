@@ -124,7 +124,7 @@ The proximity operator used there is defined as
 	\prox_{\lambda F}(z) = \arg \min_x \frac{1}{2} \twonorm{x - z}^2 + \lambda F(x)
 \end{equation}
 
-\subsubsection*{First term: $y^{n+1}$}
+\subsubsection*{Derivation of $y^{n+1}$}
 For the first term defined in Equation \eqref{eq:yn1} we get the following derivation:
 \begin{align}
 	y^{n+1} &= prox_{\sigma F^*}(y^n + \sigma K \bar{x}^n) \\
@@ -135,7 +135,7 @@ For the first term defined in Equation \eqref{eq:yn1} we get the following deriv
 				\sigma \cdot \prox_{\twonorm{\cdot} / \sigma}((y^n + \sigma \nabla \bar{x}^n) / \sigma)
 				\label{eq:two_norm_proximity_used}
 \end{align}
-Using Moreau's Identity in step \eqref{eq:moreaus_identity_used} which is defined as
+using Moreau's Identity in step \eqref{eq:moreaus_identity_used} which is defined as
 \begin{equation}
 	\prox_{\lambda F^*}(z) = z - \lambda \cdot \prox_{F/ \lambda}(z / \lambda) 
 \end{equation}
@@ -174,6 +174,8 @@ Plugging this into Equation \eqref{eq:two_norm_proximity_used}, we get
 			&= \frac{y^n + \sigma \nabla \bar{x}^n}
 				    {\max \left(1, \twonorm{y^n + \sigma \nabla \bar{x}^n}\right)}
 \end{align}
+
+\subsubsection*{Derivation of $x^{n+1}$}
 
 \subsection*{Implementation}
 
