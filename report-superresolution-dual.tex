@@ -67,7 +67,7 @@ resolution image $u$ (of size $M \times N$) a low level resolution image
 For all images, we assume that they are given as vectors\footnote{following the flattening conventions of matlabs $(:)$ operator}.
 
 So far, everything is the same as in the previous exercise. But instead of
-solving Equation \ref{eq:initial_energy} directly, we will derive the primal-dual
+solving Equation \eqref{eq:initial_energy} directly, we will derive the primal-dual
 formulation
 \begin{equation}
 \min_{u \in U} \max_{y \in Y} < Ku, y > - F^*(y) + G(u)
@@ -80,7 +80,7 @@ and solve it instead. All needed conditions are met:
 \item $K = \nabla \cdot$ is a linear operator
 \end{itemize}
 \subsubsection*{Legendre Fenchel Transform of TV term}
-Since $F$ only appears as it's convex conjugate $F^*$ in Equation \ref{eq:dual_energy}, we need to compute it first.
+Since $F$ only appears as it's convex conjugate $F^*$ in Equation \eqref{eq:dual_energy}, we need to compute it first.
 \begin{align}
 	F^*(y) &= (\norm{\cdot}_2)^*(y) \\
 		  &= \sup_x x^T y - \twonorm{x} \\
@@ -92,11 +92,11 @@ Since $F$ only appears as it's convex conjugate $F^*$ in Equation \ref{eq:dual_e
   			 \end{cases} \label{eq:cases_F_star} \\
   	      &= \delta(y)
 \end{align}
-In step \ref{eq:cauchy_schwary} we used the Cauchy-Schwarz inequality
+In step \eqref{eq:cauchy_schwary} we used the Cauchy-Schwarz inequality
 \begin{equation}
 	\twonorm{x} = \max_{\twonorm{z} \leq 1} x^T z
 \end{equation}
-Further, the result in Equation \ref{eq:cases_F_star} can be derived by seeing that 
+Further, the result in Equation \eqref{eq:cases_F_star} can be derived by seeing that 
 the inner minimum term always will be 0 in the first case, since then z will adapt to be
 equal to y, resulting in the multiplication with a zero vector. If z can not be set equal
 to y, i. e. $\twonorm{y} > 1$, the superior is unbound.
@@ -104,13 +104,13 @@ to y, i. e. $\twonorm{y} > 1$, the superior is unbound.
 Consequently, the convex conjugate of the two norm is the \emph{unit ball indicator function}\footnote{1 if inside, $\infty$ if outside}.
 
 We arrive at the Primal-Dual formulation for super resolution by simply putting our
-results so far into Equation \ref{eq:dual_energy}.
+results so far into Equation \eqref{eq:dual_energy}.
 \begin{equation}
 \min_{u \in U} \max_{y \in Y} <\nabla u, y> - \delta(y) + \frac{\lambda}{2}\twonorm{Du - g}^2
 \end{equation}
 
 \subsection*{Primal-Dual steps}
-Equation \ref{eq:dual_energy} can be solved using Primal-Dual steps. Specifically,
+Equation \eqref{eq:dual_energy} can be solved using Primal-Dual steps. Specifically,
 the following algorithm:
 \begin{align}
 	y^{n+1} &= \prox_{\sigma F^*}(y^n + \sigma K \bar{x}^n) \label{eq:yn1} \\
@@ -119,26 +119,62 @@ the following algorithm:
 \end{align}
 with $\theta \in (0, 1]$ and $\tau \sigma \norm{K}^2 < 1$. 
 
-The proximity operator is defined as 
+The proximity operator used there is defined as 
 \begin{equation}
 	\prox_{\lambda F}(z) = \arg \min_x \frac{1}{2} \twonorm{x - z}^2 + \lambda F(x)
 \end{equation}
 
-For the first term defined in Equation \ref{eq:yn1} we get the following derivation:
-\begin{align*}
+\subsubsection*{First term: $y^{n+1}$}
+For the first term defined in Equation \eqref{eq:yn1} we get the following derivation:
+\begin{align}
 	y^{n+1} &= prox_{\sigma F^*}(y^n + \sigma K \bar{x}^n) \\
 			&= y^n + \sigma K \bar{x}^n - 
-				\sigma \cdot \prox_{K / \sigma}((y^n + \sigma K \bar{x}^n) / \sigma) 
+				\sigma \cdot \prox_{F / \sigma}((y^n + \sigma K \bar{x}^n) / \sigma) 
 				\label{eq:moreaus_identity_used} \\
 			&= y^n + \sigma \nabla \bar{x}^n - 
-				\sigma \cdot \prox_{\nabla / \sigma}((y^n + \sigma \nabla \bar{x}^n) / \sigma) \\
-			&= \frac{y^n + \sigma \nabla \bar{x}^n}
-				    {\max(1, \twonorm{y^n + \sigma \nabla \bar{x}^n})}
-\end{align*}
-Using Moreau's Identity in step \ref{eq:moreaus_identity_used} which is defined as
+				\sigma \cdot \prox_{\twonorm{\cdot} / \sigma}((y^n + \sigma \nabla \bar{x}^n) / \sigma)
+				\label{eq:two_norm_proximity_used}
+\end{align}
+Using Moreau's Identity in step \eqref{eq:moreaus_identity_used} which is defined as
 \begin{equation}
 	\prox_{\lambda F^*}(z) = z - \lambda \cdot \prox_{F/ \lambda}(z / \lambda) 
 \end{equation}
+Now, we need to compute the proximity operator of the two norm as it 
+occurs in Equation \eqref{eq:two_norm_proximity_used} TODO: either fully derive or delete.
+\begin{align}
+	\prox_{\twonorm{\cdot} / \lambda}(z / \lambda) &= \arg \min_x \frac{1}{2} \twonorm{x - z}^2 + \lambda \twonorm{z/\lambda} \\
+	&= \arg \min_x \frac{1}{2} \twonorm{x - z}^2 + \twonorm{z}
+\end{align}
+This can be solved by deriving and setting to zero:
+\begin{align*}
+	x - z/\lambda + \frac{1}{\twonorm{x}} \cdot \frac{1}{2} \cdot 2x &\overset{!}{=} 0 \\
+	x - z/\lambda + \frac{1}{\twonorm{x}} x &= 0 \\
+	z &= \lambda(\frac{1}{\twonorm{x}} x - x)
+\end{align*}
+So we end up with
+\begin{equation}
+	\prox_{\twonorm{\cdot} / \lambda}(z / \lambda) =
+	z / \lambda \cdot \max \left(0 , 1 - \frac{1}{\twonorm{x}} \right)
+\end{equation}
+Plugging this into Equation \eqref{eq:two_norm_proximity_used}, we get
+\begin{align}
+	y^{n+1} &= y^n + \sigma \nabla \bar{x}^n - 
+			   \sigma \cdot ((y^n + \sigma \nabla \bar{x}^n) / \sigma \cdot
+			   \max \left(0, 1 - \frac{1}{\twonorm{y^n + \sigma \nabla \bar{x}^n)}} \right) \\
+			&= y^n + \sigma \nabla \bar{x}^n - 
+			   (y^n + \sigma \nabla \bar{x}^n) \cdot
+			   \max \left(0, 1 - \frac{1}{\twonorm{y^n + \sigma \nabla \bar{x}^n)}} \right) \\
+			&= \begin{cases}
+   				y^n + \sigma \nabla \bar{x}^n  			
+   						& \text{if} \twonorm{y^n + \sigma \nabla \bar{x}^n)} \leq 1 \\
+   				\frac{y^n + \sigma \nabla \bar{x}^n}
+				    {\twonorm{y^n + \sigma \nabla \bar{x}^n}}      
+				    		& \text{otherwise}
+  			 \end{cases} \label{eq:cases_F_star} \\
+			&= \frac{y^n + \sigma \nabla \bar{x}^n}
+				    {\max \left(1, \twonorm{y^n + \sigma \nabla \bar{x}^n}\right)}
+\end{align}
+
 \subsection*{Implementation}
 
 \subsubsection*{Iteration count}
