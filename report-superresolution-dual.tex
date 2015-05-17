@@ -16,6 +16,7 @@
 % something NOT relevant to the usage of the package.
 \setlength{\parindent}{0pt}	
 \setlength{\parskip}{18pt}
+\newcommand{\prox}{\text{prox}}
 \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
 \newcommand{\twonorm}[1]{\left\lVert#1\right\rVert_2}
 \usepackage[latin1]{inputenc} 
@@ -112,10 +113,32 @@ results so far into Equation \ref{eq:dual_energy}.
 Equation \ref{eq:dual_energy} can be solved using Primal-Dual steps. Specifically,
 the following algorithm:
 \begin{align}
-	y^{n+1} &= prox_{\sigma F^*}(y^n + \sigma K \bar{x}^n) \\
-	x^{n+1} &= prox_{\tau G}(x^n + \tau K^* y^{n+1}) \\
+	y^{n+1} &= \prox_{\sigma F^*}(y^n + \sigma K \bar{x}^n) \label{eq:yn1} \\
+	x^{n+1} &= \prox_{\tau G}(x^n + \tau K^* y^{n+1}) \\
 	\bar{x}^{n+1} &= x^{n+1} + \theta(x^{n+1} - x^n)
 \end{align}
+with $\theta \in (0, 1]$ and $\tau \sigma \norm{K}^2 < 1$. 
+
+The proximity operator is defined as 
+\begin{equation}
+	\prox_{\lambda F}(z) = \arg \min_x \frac{1}{2} \twonorm{x - z}^2 + \lambda F(x)
+\end{equation}
+
+For the first term defined in Equation \ref{eq:yn1} we get the following derivation:
+\begin{align*}
+	y^{n+1} &= prox_{\sigma F^*}(y^n + \sigma K \bar{x}^n) \\
+			&= y^n + \sigma K \bar{x}^n - 
+				\sigma \cdot \prox_{K / \sigma}((y^n + \sigma K \bar{x}^n) / \sigma) 
+				\label{eq:moreaus_identity_used} \\
+			&= y^n + \sigma \nabla \bar{x}^n - 
+				\sigma \cdot \prox_{\nabla / \sigma}((y^n + \sigma \nabla \bar{x}^n) / \sigma) \\
+			&= \frac{y^n + \sigma \nabla \bar{x}^n}
+				    {\max(1, \twonorm{y^n + \sigma \nabla \bar{x}^n})}
+\end{align*}
+Using Moreau's Identity in step \ref{eq:moreaus_identity_used} which is defined as
+\begin{equation}
+	\prox_{\lambda F^*}(z) = z - \lambda \cdot \prox_{F/ \lambda}(z / \lambda) 
+\end{equation}
 \subsection*{Implementation}
 
 \subsubsection*{Iteration count}
