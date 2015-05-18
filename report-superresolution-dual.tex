@@ -58,7 +58,7 @@
 The energy term we need to minimize for this problem is
 
 \begin{equation}
-\min_{u \in U} \norm{\nabla u} + \frac{\lambda}{2} \norm{Du - g}^2
+\min_{u \in U} \norm{\nabla u} + \frac{\lambda}{2} \twonorm{Du - g}^2
 \label{eq:initial_energy}
 \end{equation}
 with $D$ being the downsampling operator that produces from the high 
@@ -76,7 +76,7 @@ formulation
 and solve it instead. All needed conditions are met:
 \begin{itemize}
 \item $F = \norm{\cdot}_2$ is a convex function
-\item $G = \frac{\lambda}{2}\norm{ D\cdot - g}^2$ is a convex function
+\item $G = \frac{\lambda}{2}\twonorm{ D\cdot - g}^2$ is a convex function
 \item $K = \nabla \cdot$ is a linear operator
 \end{itemize}
 \subsubsection*{Legendre Fenchel Transform of TV term}
@@ -114,8 +114,8 @@ Equation \eqref{eq:dual_energy} can be solved using Primal-Dual steps. Specifica
 the following algorithm:
 \begin{align}
 	y^{n+1} &= \prox_{\sigma F^*}(y^n + \sigma K \bar{x}^n) \label{eq:yn1} \\
-	x^{n+1} &= \prox_{\tau G}(x^n + \tau K^* y^{n+1}) \\
-	\bar{x}^{n+1} &= x^{n+1} + \theta(x^{n+1} - x^n)
+	x^{n+1} &= \prox_{\tau G}(x^n + \tau K^* y^{n+1}) \label{eq:xn1} \\
+	\bar{x}^{n+1} &= x^{n+1} + \theta(x^{n+1} - x^n) \label{ex:barxn1}
 \end{align}
 with $\theta \in (0, 1]$ and $\tau \sigma \norm{K}^2 < 1$. 
 
@@ -123,6 +123,8 @@ The proximity operator used there is defined as
 \begin{equation}
 	\prox_{\lambda F}(z) = \arg \min_x \frac{1}{2} \twonorm{x - z}^2 + \lambda F(x)
 \end{equation}
+The terms from Equation \eqref{eq:xn1} and \eqref{eq:yn1} need some further derivation
+before they can be used, which is done in the following two parts.
 
 \subsubsection*{Derivation of $y^{n+1}$}
 For the first term defined in Equation \eqref{eq:yn1} we get the following derivation:
@@ -176,7 +178,31 @@ Plugging this into Equation \eqref{eq:two_norm_proximity_used}, we get
 \end{align}
 
 \subsubsection*{Derivation of $x^{n+1}$}
-
+The derivation of the second term (Equation \eqref{eq:xn1}) is similar 
+to the one in the last section. 
+\begin{align}
+x^{n+1} &= \prox_{\tau G}(x^n + \tau K^* y^{n+1}) \\
+	    &= \prox_{\tau \frac{\lambda}{2}\twonorm{ D\cdot - g}^2}(x^n + \tau \nabla^* y^{n+1}) \\
+	    &= \arg \min_m \frac{1}{2} \twonorm{m - x^n + \tau \nabla^* y^{n+1}}^2 + \tau \frac{\lambda}{2}\twonorm{ Dm - g}^2 \\
+	    &= \arg \min_m L(m)
+\end{align}
+The extrema of $L(m)$ can be found by setting the derivative 
+with respect to m to zero. Since it is a convex function, we can be sure that the 
+found value is the minimum.
+\begin{align}
+\frac{\partial}{\partial m} L(m) &= \frac{\partial}{\partial m} \frac{1}{2} \twonorm{m - x^n + \tau \nabla^* y^{n+1}}^2 
++ \tau \frac{\lambda}{2}\twonorm{ Dm - g}^2 \\
+&= m - x^n + \tau \nabla^* y^{n+1} +
+\frac{\partial}{\partial m} \tau \frac{\lambda}{2}\twonorm{Dm - g}^2 \\
+&= m - x^n + \tau \nabla^* y^{n+1} +
+\tau \lambda D(m - g) \\
+&= m - x^n + \tau \nabla^* y^{n+1} +
+\tau \lambda Dm - \tau \lambda D g \\
+&= (1 + \tau \lambda D)m - x^n + \tau \nabla^* y^{n+1} +
+\tau \lambda D g \overset{!}{=} 0 \\
+\Longleftrightarrow m &= \frac{- x^n + \tau \nabla^* y^{n+1} + \tau \lambda D g}
+{1 + \tau \lambda D} = x^{n+1}
+\end{align}
 \subsection*{Implementation}
 
 \subsubsection*{Iteration count}
