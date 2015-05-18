@@ -84,7 +84,7 @@ Since $F$ only appears as it's convex conjugate $F^*$ in Equation \eqref{eq:dual
 \begin{align}
 	F^*(y) &= (\norm{\cdot}_2)^*(y) \\
 		  &= \sup_x x^T y - \twonorm{x} \\
-		  &= \sup_x x^T y - \max_{\twonorm{z} \leq 1} x^T z \label{eq:cauchy_schwary}\\
+		  &= \sup_x x^T y - \max_{\twonorm{z} \leq 1} x^T z \label{eq:cauchy_schwarz}\\
 		  &= \sup_x \min_{\twonorm{z} \leq 1} x^T(y-z) \\
 		  &= \begin{cases}
    				0  			& \text{if} \twonorm{y} \leq 1 \\
@@ -92,7 +92,7 @@ Since $F$ only appears as it's convex conjugate $F^*$ in Equation \eqref{eq:dual
   			 \end{cases} \label{eq:cases_F_star} \\
   	      &= \delta(y)
 \end{align}
-In step \eqref{eq:cauchy_schwary} we used the Cauchy-Schwarz inequality
+In step \eqref{eq:cauchy_schwarz} we used the Cauchy-Schwarz inequality
 \begin{equation}
 	\twonorm{x} = \max_{\twonorm{z} \leq 1} x^T z
 \end{equation}
@@ -124,7 +124,7 @@ The proximity operator used there is defined as
 	\prox_{\lambda F}(z) = \arg \min_x \frac{1}{2} \twonorm{x - z}^2 + \lambda F(x)
 \end{equation}
 The terms from Equation \eqref{eq:xn1} and \eqref{eq:yn1} need some further derivation
-before they can be used, which is done in the following two parts.
+before they can be used, which is done in the following.
 
 \subsubsection*{Derivation of $y^{n+1}$}
 For the first term defined in Equation \eqref{eq:yn1} we get the following derivation:
@@ -172,7 +172,7 @@ Plugging this into Equation \eqref{eq:two_norm_proximity_used}, we get
    				\frac{y^n + \sigma \nabla \bar{x}^n}
 				    {\twonorm{y^n + \sigma \nabla \bar{x}^n}}      
 				    		& \text{otherwise}
-  			 \end{cases} \label{eq:cases_F_star} \\
+  			 \end{cases} \\
 			&= \frac{y^n + \sigma \nabla \bar{x}^n}
 				    {\max \left(1, \twonorm{y^n + \sigma \nabla \bar{x}^n}\right)}
 \end{align}
