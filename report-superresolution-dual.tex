@@ -198,10 +198,11 @@ found value is the minimum.
 \tau \lambda D(m - g) \\
 &= m - x^n + \tau \nabla^* y^{n+1} +
 \tau \lambda Dm - \tau \lambda D g \\
-&= (1 + \tau \lambda D)m - x^n + \tau \nabla^* y^{n+1} +
+&= (I + \tau \lambda D)m - x^n + \tau \nabla^* y^{n+1} +
 \tau \lambda D g \overset{!}{=} 0 \\
-\Longleftrightarrow m &= \frac{- x^n + \tau \nabla^* y^{n+1} + \tau \lambda D g}
-{1 + \tau \lambda D} = x^{n+1}
+\Longleftrightarrow m &= (I + \tau \lambda D)^{-1} (x^n - \tau \nabla^* y^{n+1} + \tau \lambda D g)
+{} \\
+&= (I + \tau \lambda D)^{-1} (x^n - \tau \nabla y^{n+1} + \tau \lambda D g) = x^{n+1}
 \end{align}
 \subsection*{Implementation}
 
