@@ -8,7 +8,8 @@ im = imread(img_name);
 if size(im, 3) == 3
     im = rgb2gray( im );
 end
-im = im2double(im);
+% Resize to about a fifth for debugging
+im = imresize(im2double(im), [40 70]);
 SRfactor = 2;
 
 % build SRfactor x SRfactor downsample operator
@@ -34,13 +35,13 @@ nearest = imresize(g,[M N],'nearest');
 
 for i = 1:length(lambdas)
     lambda = lambdas(i);
-    [uG, iterations, costs] = superresolution_sm(g,D,lambda, 2, img_name);
+    [uG, iterations, costs] = superresolution_dual_sm(g,D,lambda, 2, img_name);
     %plot(costs);
     %figure;
     title(['Resize factor: ', num2str(SRfactor)]);
     % top left: reconstructed thing
     % top right: upsampled img using "nearest" operator
-    % bot left: diff to neare   st
+    % bot left: diff to nearest
     % bot right: original image
     error = (uG - im).^2;
     ssim_vals(i) = ssim(uG, im);
