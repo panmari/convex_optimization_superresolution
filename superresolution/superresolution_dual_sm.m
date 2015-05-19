@@ -16,13 +16,13 @@ N = ND / SRfactor;
 % Constants
 tau = 0.01;
 sigma = 1/0.09;
-theta = 0.3;
+theta = 0.1;
 
 % Initialize all variables.
-y_n = zeros(M, N);
+y_n = zeros(M, N, 2);
 x_n = zeros(M, N);
 % TODO: better initial guess?
-xbar_n = zeros(M, N);
+xbar_n = reshape(D' * g(:), M, N);
 DTD = D' * D;
 % Used for computing x_n1, instead of inverting it here we use slash
 % operator below.
@@ -34,9 +34,12 @@ max_iterations = 1000;
 costs = zeros(max_iterations,1);
 
 for i=1:max_iterations
-    div_xbar_n = divergence(xbar_n, true);
-    % TODO: Norm
-    y_n1 = y_n + sigma * div_xbar_n / max(1, norm(y_n + sigma * div_xbar_n));
+    % Compute y_n1
+    y_n1_nominator = y_n + sigma * gradient(xbar_n, true);
+    y_n1_denominator = max(1, sqrt(sum((y_n1_nominator).^2, 3)));
+    y_n1(:,:,1) = y_n1_nominator(:,:,1) ./ y_n1_denominator;
+    y_n1(:,:,2) = y_n1_nominator(:,:,2) ./ y_n1_denominator;
+
     div_y_n1 = divergence(y_n1, false);
     x_n1 = x_n1_divisor * reshape(x_n + tau * div_y_n1 + x_n1_right_summand, [], 1);
     x_n1 = reshape(x_n1, M, N);
