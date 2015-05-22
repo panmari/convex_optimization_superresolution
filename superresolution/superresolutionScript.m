@@ -56,6 +56,7 @@ for i = 1:length(lambdas)
     displayed_images = [uG, nearest; ...
                         10 * error, im];
     imshow(displayed_images);
+    drawnow
 end
 %% Visualize error under different lambdas
 error_nearest = (nearest - im).^2;

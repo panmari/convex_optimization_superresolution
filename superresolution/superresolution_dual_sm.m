@@ -15,13 +15,13 @@ N = ND / SRfactor;
 
 % Constants
 % K_a is upper bound.
-K_a = sqrt(4);
+K_a = sqrt(8);
 % Should be rather small
-tau = 10*0.2*1e-5; 
+tau = 10*0.2*1e-4; 
 % Should be rather large
 sigma = 1/(tau*K_a);
 
-theta = 0.1;
+theta = 1;
 
 % Initialize all variables.
 y_n = zeros(M, N, 2);
@@ -32,7 +32,8 @@ DTD = D' * D;
 % Used for computing x_n1, instead of inverting it here we use slash
 % operator below.
 x_n1_matrix = speye(size(DTD)) + tau * lambda * DTD;
-%x_n1_divisor = inv(x_n1_matrix);
+x_n1_matrix_inv = x_n1_matrix \ speye(size(DTD));
+disp('computed inverse')
 x_n1_right_summand = reshape(tau * lambda * D' * g(:), M, N);
 % Maximum number of iterations learnt
 max_iterations = 1000;
@@ -48,7 +49,7 @@ for i=1:max_iterations
 
     % Compute x_n1
     div_y_n1 = divergence(y_n1, false);
-    x_n1 = x_n1_matrix \ reshape(x_n + tau * div_y_n1 + x_n1_right_summand, [], 1);
+    x_n1 = x_n1_matrix_inv * reshape(x_n + tau * div_y_n1 + x_n1_right_summand, [], 1);
     x_n1 = reshape(x_n1, M, N);
     
     % Compute xbar_n1
