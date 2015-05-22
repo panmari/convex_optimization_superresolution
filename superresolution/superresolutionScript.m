@@ -1,15 +1,17 @@
 
-%clear all;
+clear all;
 close all;
-%clc;
+clc;
+SHOW_COSTS = true;
 img_name = 'fruits.png';
 img_name = 'grass_small.png';
 im = imread(img_name);
 if size(im, 3) == 3
     im = rgb2gray( im );
 end
+im = im2double(im);
 % Resize to about a fifth for debugging
-im = imresize(im2double(im), [40 70]);
+%im = imresize(im, [40 70]);
 SRfactor = 2;
 
 % build SRfactor x SRfactor downsample operator
@@ -36,8 +38,11 @@ nearest = imresize(g,[M N],'nearest');
 for i = 1:length(lambdas)
     lambda = lambdas(i);
     [uG, iterations, costs] = superresolution_dual_sm(g,D,lambda, 2, img_name);
-    %plot(costs);
-    %figure;
+    if SHOW_COSTS
+        plot(costs);
+        figure;
+        title(['Lambda=', num2str(lambda)]);
+    end
     title(['Resize factor: ', num2str(SRfactor)]);
     % top left: reconstructed thing
     % top right: upsampled img using "nearest" operator
