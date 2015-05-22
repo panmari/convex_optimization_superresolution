@@ -46,7 +46,8 @@ for i = 1:length(lambdas)
     error = (uG - im).^2;
     ssim_vals(i) = ssim(uG, im);
     SSEs(i) = sum(error(:));
-    fprintf('Lambda = %f, SSE: %f, SSIM: %f, iterations=%i \n', lambda, SSEs(i), ssim_vals(i), iterations)
+    fprintf('Lambda = %f, SSE: %f, SSIM: %f, iterations=%i \n', ...
+        lambda, SSEs(i), ssim_vals(i), iterations)
     displayed_images = [uG, nearest; ...
                         10 * error, im];
     imshow(displayed_images);
