@@ -3,13 +3,15 @@ clear all;
 close all;
 clc;
 SHOW_COSTS = true;
-img_name = 'fruits.png';
+%img_name = 'fruits.png';
 img_name = 'grass_small.png';
 im = imread(img_name);
 if size(im, 3) == 3
     im = rgb2gray( im );
 end
 im = im2double(im);
+%im = zeros(100);
+%im(45:65, 45:65) = 0.25;
 % Resize to about a fifth for debugging
 %im = imresize(im, [40 70]);
 SRfactor = 2;
@@ -29,7 +31,7 @@ D = sparse(rows,cols,vals,MD*ND,M*N);
 % (the low resolution thingy)
 g = reshape(D*im(:),M/SRfactor,N/SRfactor);
 
-lambdas = [100:1000:10000];
+lambdas = 100; %[100:1000:10000];
 
 SSEs = zeros(size(lambdas));
 ssim_vals = zeros(size(lambdas));
@@ -39,10 +41,11 @@ for i = 1:length(lambdas)
     lambda = lambdas(i);
     [uG, iterations, costs] = superresolution_dual_sm(g,D,lambda, 2, img_name);
     if SHOW_COSTS
-        plot(costs);
         figure;
+        plot(costs);
         title(['Lambda=', num2str(lambda)]);
     end
+    figure;
     title(['Resize factor: ', num2str(SRfactor)]);
     % top left: reconstructed thing
     % top right: upsampled img using "nearest" operator
@@ -51,11 +54,12 @@ for i = 1:length(lambdas)
     error = (uG - im).^2;
     ssim_vals(i) = ssim(uG, im);
     SSEs(i) = sum(error(:));
-    fprintf('Lambda = %f, SSE: %f, SSIM: %f, iterations=%i \n', ...
+    fprintf('Lambda = %f, SSD: %f, SSIM: %f, iterations=%i \n', ...
         lambda, SSEs(i), ssim_vals(i), iterations)
     displayed_images = [uG, nearest; ...
                         10 * error, im];
     imshow(displayed_images);
+    drawnow
 end
 %% Visualize error under different lambdas
 error_nearest = (nearest - im).^2;
