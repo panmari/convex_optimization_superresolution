@@ -95,12 +95,12 @@ The gradient of the fitting term on the right can be derived pretty easily using
 \frac{\partial E(u)}{\partial u} 
 &= \norm{\nabla u}\frac{\partial}{\partial u} + 
 \frac{\lambda}{2} (Du - g)^T(Du - g) \frac{\partial}{\partial u} \\
-&= \norm{\nabla u} \frac{\partial}{\partial u} + D^T D u - D^T g
+&= \norm{\nabla u} \frac{\partial}{\partial u} + \lambda (D^T D u - D^T g)
 \end{align}
 by expressing the images $u$ and $g$ as vectors. For further use, we define
 this term as 
 \begin{equation}
- f = D^T D u - D^T g
+ f(u) = D^T D u - D^T g
 \end{equation}
 The regularization term however needs some more work. 
 For this purpose we first discretize the norm of the gradient as
@@ -163,7 +163,7 @@ Combining our efforts from before, we can express the gradient of the objective 
 \nabla E[i] = &\frac{2u[i,j] - u[i + 1, j] - u[i, j+1]}{\tau[i,j]} + \\
 	&\frac{u[i,j] - u[i - 1, j]}{\tilde{\tau}[i - 1, j]} + \\
 	&\frac{u[i,j] - u[i, j - 1]}{\tilde{\tau}[i, j-1]} + \\
-	&f[i]
+	&\lambda \cdot f(u)[i]
 \end{align}
 
 \subsection*{Implementation}
@@ -212,8 +212,8 @@ optimization to not become unstable.
 \begin{figure}[ht!]%
 \centering
 \includegraphics[width=0.9\textwidth]{lambda_vs_ssd.png}
-\caption{SSE for various lambdas after 8000 iterations. For comparison, the
-SSE of the image obtained through nearest-neighbor scaling was added (green line).}
+\caption{SSD for various lambdas after 8000 iterations. For comparison, the
+SSD of the image obtained through nearest-neighbor scaling was added (green line).}
 \label{fig:lambda_vs_ssd}
 \end{figure}
 I tested a wide variety of lambdas before concluding that the optimal lambda
