@@ -3,9 +3,9 @@ clear all;
 close all;
 clc;
 SHOW_COSTS = true;
-%img_name = 'fruits.png';
-img_name = 'grass_small.png';
-im = imread(img_name);
+%img_name = 'fruits';
+img_name = 'grass_small';
+im = imread([img_name, '.png']);
 if size(im, 3) == 3
     im = rgb2gray( im );
 end
@@ -31,7 +31,7 @@ D = sparse(rows,cols,vals,MD*ND,M*N);
 % (the low resolution thingy)
 g = reshape(D*im(:),M/SRfactor,N/SRfactor);
 
-lambdas = 100; %[100:1000:10000];
+lambdas = [10, 50, 100, 500, 1000:1000:20000];
 
 SSEs = zeros(size(lambdas));
 ssim_vals = zeros(size(lambdas));
@@ -58,7 +58,8 @@ for i = 1:length(lambdas)
         lambda, SSEs(i), ssim_vals(i), iterations)
     displayed_images = [uG, nearest; ...
                         10 * error, im];
-    imshow(displayed_images);
+    imwrite(uG, sprintf('%s_lambda_%i.png', img_name, lambda));         
+    %imshow(displayed_images);
     drawnow
 end
 %% Visualize error under different lambdas

@@ -18,6 +18,10 @@ N = ND / SRfactor;
 K_a = 8;
 % Should be rather small
 tau = 1e-3; 
+
+if lambda < 100
+    tau = 1e-1;
+end
 % Should be rather large
 sigma = 1/(tau*K_a);
 
@@ -35,7 +39,7 @@ x_n1_matrix = speye(size(DTD)) + tau * lambda * DTD;
 %x_n1_divisor = inv(x_n1_matrix);
 x_n1_right_summand = reshape(tau * lambda * D' * g(:), M, N);
 % Maximum number of iterations learnt
-max_iterations = 2000;
+max_iterations = 1000;
 % For displaying changes in costs later on.
 costs = zeros(max_iterations,1);
 
@@ -57,11 +61,11 @@ for i=1:max_iterations
     % Adapt for next timestep, n + 1 -> n
     y_n = y_n1;
     x_n = x_n1;
-    if mod(i, 50) == 1
-       disp('Update!');
-       imagesc([xbar_n, imresize(g,[M N],'nearest')]);
-       drawnow
-    end
+%     if mod(i, 50) == 1
+%        disp('Update!');
+%        imagesc([xbar_n, imresize(g,[M N],'nearest')]);
+%        drawnow
+%     end
     xbar_n = xbar_n1;
     costs(i) = energy_term_for(xbar_n, g, D, lambda);
 end
