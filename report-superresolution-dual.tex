@@ -144,19 +144,40 @@ using Moreau's Identity in step \eqref{eq:moreaus_identity_used} which is define
 Now, we need to compute the proximity operator of the two norm as it 
 occurs in Equation \eqref{eq:two_norm_proximity_used} TODO: either fully derive or delete.
 \begin{align}
-	\prox_{\twonorm{\cdot} / \lambda}(z / \lambda) &= \arg \min_x \frac{1}{2} \twonorm{x - z}^2 + \lambda \twonorm{z/\lambda} \\
-	&= \arg \min_x \frac{1}{2} \twonorm{x - z}^2 + \twonorm{z}
+	\prox_{\twonorm{\cdot} / \lambda}(z / \lambda) 
+	&= \arg \min_x \frac{1}{2} \twonorm{x - \frac{z}{\lambda}}^2 +
+	\frac{1}{\lambda} \twonorm{x} \\
+	&= \arg \min_x P(x)
 \end{align}
 This can be solved by deriving and setting to zero:
 \begin{align*}
-	x - z/\lambda + \frac{1}{\twonorm{x}} \cdot \frac{1}{2} \cdot 2x &\overset{!}{=} 0 \\
-	x - z/\lambda + \frac{1}{\twonorm{x}} x &= 0 \\
-	z &= \lambda(\frac{1}{\twonorm{x}} x - x)
+\frac{\partial}{\partial x} P(x) &= 
+	\frac{\partial}{\partial x} \left(
+ 		\frac{1}{2} \twonorm{x - \frac{z}{\lambda}}^2 +
+		\frac{1}{\lambda} \twonorm{x} 
+	\right) \\
+&= 
+	\frac{\partial}{\partial x} \left(
+		\frac{1}{2} (x-\frac{z}{\lambda}) (x-\frac{z}{\lambda}) + 
+		\frac{1}{\lambda} (x^2)^{\frac{1}{2}}
+	\right) \\
+&= 
+	x-\frac{z}{\lambda} + 
+	\frac{\partial}{\partial x} \left(
+		\frac{1}{\lambda} (x^2)^{\frac{1}{2}}
+	\right) \\
+&= 
+	x-\frac{z}{\lambda} + 
+	\frac{1}{\lambda} 2x \frac{1}{2} (x^2)^{-\frac{1}{2}} \\
+&= 
+	x-\frac{z}{\lambda} + 
+	\frac{1}{\lambda} \frac{x}{\twonorm{x}}
 \end{align*}
+Since in this expression, we can not easily express 
 So we end up with
 \begin{equation}
 	\prox_{\twonorm{\cdot} / \lambda}(z / \lambda) =
-	z / \lambda \cdot \max \left(0 , 1 - \frac{1}{\twonorm{x}} \right)
+	z / \lambda \cdot \max \left(0 , 1 - \frac{1}{\twonorm{z}} \right)
 \end{equation}
 Plugging this into Equation \eqref{eq:two_norm_proximity_used}, we get
 \begin{align}
@@ -190,21 +211,34 @@ The extrema of $L(m)$ can be found by setting the derivative
 with respect to m to zero. Since it is a convex function, we can be sure that the 
 found value is the minimum.
 \begin{align}
-\frac{\partial}{\partial m} L(m) &= \frac{\partial}{\partial m} \frac{1}{2} \twonorm{m - x^n + \tau \nabla^* y^{n+1}}^2 
-+ \tau \frac{\lambda}{2}\twonorm{ Dm - g}^2 \\
+\frac{\partial}{\partial m} L(m) &= \frac{\partial}{\partial m} \left( \frac{1}{2} \twonorm{m - x^n + \tau \nabla^* y^{n+1}}^2 
++ \tau \frac{\lambda}{2}\twonorm{ Dm - g}^2 \right) \\
 &= m - x^n + \tau \nabla^* y^{n+1} +
 \frac{\partial}{\partial m} \tau \frac{\lambda}{2}\twonorm{Dm - g}^2 \\
 &= m - x^n + \tau \nabla^* y^{n+1} +
 \tau \lambda D(m - g) \\
 &= m - x^n + \tau \nabla^* y^{n+1} +
 \tau \lambda Dm - \tau \lambda D g \\
-&= (1 + \tau \lambda D)m - x^n + \tau \nabla^* y^{n+1} +
+&= (I + \tau \lambda D)m - x^n + \tau \nabla^* y^{n+1} +
 \tau \lambda D g \overset{!}{=} 0 \\
-\Longleftrightarrow m &= \frac{x^n - \tau \nabla^* y^{n+1} + \tau \lambda D g}
-{1 + \tau \lambda D} \\
-&= \frac{x^n + \tau \nabla y^{n+1} + \tau \lambda D g}
-{1 + \tau \lambda D} = x^{n+1}
+\Longleftrightarrow m &= (I + \tau \lambda D)^{-1} 
+(x^n - \tau \nabla^* y^{n+1} + \tau \lambda D g)
+ \\
+&=  (I + \tau \lambda D)^{-1} (x^n + \tau \nabla y^{n+1} + \tau \lambda D g) \\
+&= x^{n+1}
 \end{align}
+
+\subsubsection*{Overview of Primal-Dual steps}
+After derivation, we have the following steps:
+\begin{align}
+y^{n+1} &= \frac{y^n + \sigma \nabla \bar{x}^n}
+				{\max \left( 1, \twonorm{y^n + \sigma \nabla \bar{x}^n} \right)} \\
+x^{n+1} &= (I + \tau \lambda D)^{-1} 
+           (x^n + \tau \nabla \cdot y^{n+1} + \tau \lambda D g) \\
+\bar{x}^{n+1} &= x^{n+1} + \theta(x^{n+1} - x^n)
+\end{align}
+and are ready for doing our implementation.
+
 \subsection*{Implementation}
 
 \subsubsection*{Iteration count}
