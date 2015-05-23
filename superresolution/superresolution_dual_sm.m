@@ -39,7 +39,7 @@ x_n1_matrix = speye(size(DTD)) + tau * lambda * DTD;
 %x_n1_divisor = inv(x_n1_matrix);
 x_n1_right_summand = reshape(tau * lambda * D' * g(:), M, N);
 % Maximum number of iterations learnt
-max_iterations = 1000;
+max_iterations = 300;
 % For displaying changes in costs later on.
 costs = zeros(max_iterations,1);
 
@@ -61,12 +61,12 @@ for i=1:max_iterations
     % Adapt for next timestep, n + 1 -> n
     y_n = y_n1;
     x_n = x_n1;
-%     if mod(i, 50) == 1
-%        disp('Update!');
-%        imagesc([xbar_n, imresize(g,[M N],'nearest')]);
-%        drawnow
-%     end
+    if mod(i, 5) == 1
+        % Draw intermediary image
+        imwrite(xbar_n, sprintf('%s_lambda_%i_iteration_%i.png', img_name, lambda, i - 1));         
+    end
     xbar_n = xbar_n1;
+
     costs(i) = energy_term_for(xbar_n, g, D, lambda);
 end
 u = reshape(xbar_n,M,N);

@@ -247,12 +247,50 @@ and are ready for doing our implementation.
 \subsection*{Implementation}
 
 \subsubsection*{Iteration count}
+The number of iterations needed is heavily dependent on lambda. 
+Smaller lambdas need much longer to converge than larger ones. 
+The behavior of the energy function in both cases is visible in Figure \ref{fig:energy_plots}. 
+Some intermediary images for a small lambda can be seen in Figure \ref{fig:iteration_count_lambda_50}, for a large lambda in Figure \ref{fig:iteration_count_lambda_1000}.
+\begin{figure}[ht!]%
+\centering
+\subfigure[$\lambda = 50$]{\includegraphics[width=0.45\textwidth]{energy_lambda_50.png}}
+\subfigure[$\lambda = 1000$]{\includegraphics[width=0.45\textwidth]{energy_lambda_1000.png}} \\
+\caption{Behavior of the energy function for different lambdas. For lambdas above 
+a thousand, 50 iterations are enough. Smaller lambdas still improve slightly until about 300 iterations.}
+\label{fig:energy_plots}
+\end{figure}
 
+\begin{figure}[ht!]%
+\centering
+\subfigure[0 Iterations]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_50_iteration_0.png}}
+\subfigure[25 Iterations]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_50_iteration_25.png}}
+\subfigure[50 Iterations]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_50_iteration_50.png}} \\
+\subfigure[100 Iterations]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_50_iteration_100.png}} 
+\subfigure[200 Iterations]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_50_iteration_200.png}} 
+\subfigure[300 Iterations]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_50_iteration_300.png}} 
+\caption{The superresolution image after various iteration counts.
+0 iterations shows the initial guess. After iteration 200 there are only
+minor changes. The lambda was set to 50 for these images.}
+\label{fig:iteration_count_lambda_50}
+\end{figure}
+
+\begin{figure}[ht!]%
+\centering
+\subfigure[0 Iterations]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_1000_iteration_0.png}}
+\subfigure[5 Iterations]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_1000_iteration_5.png}} 
+\subfigure[10 Iterations]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_1000_iteration_10.png}} \\
+\subfigure[15 Iterations]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_1000_iteration_15.png}}
+\subfigure[20 Iterations]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_1000_iteration_30.png}}
+\subfigure[300 Iterations]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_1000_iteration_300.png}} 
+\caption{The superresolution image after various iteration counts.
+0 iterations shows the initial guess. After iteration 30 there are only
+minor changes. The lambda was set to 1000 for these images.}
+\label{fig:iteration_count_lambda_1000}
+\end{figure}
 
 \subsubsection*{Effect of Lambda}
 As in the previous assignment, the lambda defines the smoothness of the converged
-solution. As in the previous assignment, I could choose rather large lambdas
-without the quality getting worse. 
+solution. Surprisingly, I could increase lambda very high without the quality deteriorating.
 With smaller lambdas ($ \lambda < 100 $), the algorithm did not converge anymore,
 with default parameters, so I adapted my implementation to choose tau accordingly
 to lambda:

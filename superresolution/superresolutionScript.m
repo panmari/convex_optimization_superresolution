@@ -33,7 +33,7 @@ D = sparse(rows,cols,vals,MD*ND,M*N);
 % (the low resolution thingy)
 g = reshape(D*im(:),M/SRfactor,N/SRfactor);
 
-lambdas = 1000; %[10, 50, 100, 500, 1000:1000:20000];
+lambdas = 50; %[10, 50, 100, 500, 1000:1000:20000];
 
 SSEs = zeros(size(lambdas));
 ssim_vals = zeros(size(lambdas));
@@ -43,9 +43,12 @@ for i = 1:length(lambdas)
     lambda = lambdas(i);
     [uG, iterations, costs] = superresolution_dual_sm(g,D,lambda, 2, img_name);
     if SHOW_COSTS
-        figure;
+        f = figure;
         plot(costs);
         title(['Energy for Lambda=', num2str(lambda)]);
+        xlabel('Iteration');
+        ylabel('Energy');
+        saveas(f, sprintf('energy_lambda_%i.png', lambda));
     end
     % For plotting later on
     error = (uG - im).^2;
