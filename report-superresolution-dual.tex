@@ -147,6 +147,7 @@ occurs in Equation \eqref{eq:two_norm_proximity_used} TODO: either fully derive 
 	\prox_{\twonorm{\cdot} / \lambda}(z / \lambda) 
 	&= \arg \min_x \frac{1}{2} \twonorm{x - \frac{z}{\lambda}}^2 +
 	\frac{1}{\lambda} \twonorm{x} \\
+	\label{eq:P_x}
 	&= \arg \min_x P(x)
 \end{align}
 This can be solved by deriving and setting to zero:
@@ -171,9 +172,13 @@ This can be solved by deriving and setting to zero:
 	\frac{1}{\lambda} 2x \frac{1}{2} (x^2)^{-\frac{1}{2}} \\
 &= 
 	x-\frac{z}{\lambda} + 
-	\frac{1}{\lambda} \frac{x}{\twonorm{x}}
+	\frac{1}{\lambda} \frac{x}{\twonorm{x}} \overset{!}{=} 0 
+	\label{eq:proximity_operator_l2_norm_fail}
 \end{align*}
-Since in this expression, we can not easily express 
+Since we can not easily solve Equation \eqref{eq:proximity_operator_l2_norm_fail} for $x$, we need to express $P(x)$ as defined in \eqref{eq:P_x} in a more convenient form.
+\begin{align}
+todo
+\end{align}
 So we end up with
 \begin{equation}
 	\prox_{\twonorm{\cdot} / \lambda}(z / \lambda) =
