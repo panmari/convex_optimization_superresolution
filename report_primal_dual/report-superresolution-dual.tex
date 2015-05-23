@@ -250,11 +250,36 @@ and are ready for doing our implementation.
 
 
 \subsubsection*{Effect of Lambda}
-TODO: SSD vs lambda
+As in the previous assignment, the lambda defines the smoothness of the converged
+solution. As in the previous assignment, I could choose rather large lambdas
+without the quality getting worse. 
+With smaller lambdas ($ \lambda < 100 $), the algorithm did not converge anymore,
+with default parameters, so I adapted my implementation to choose tau accordingly
+to lambda:
+\begin{equation}
+	\tau_\lambda = 
+	\begin{cases} 
+		0.1 &\mbox{if } \lambda < 100 \\ 
+		0.001 & \mbox{otherwise } 
+	\end{cases}
+\end{equation}
+
+\begin{figure}[ht!]%
+\centering
+\subfigure[$\lambda = 10$]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_10.png}}
+\subfigure[$\lambda = 100$]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_100.png}}
+\subfigure[$\lambda = 1000$]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_1000.png}} \\
+\subfigure[$\lambda = 2000$]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_2000.png}} 
+\subfigure[$\lambda = 5000$]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_5000.png}} 
+\subfigure[$\lambda = 10000$]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_10000.png}} 
+\caption{Various resulting images with different lambdas after 8000 iterations.}
+\label{fig:lambdas}
+\end{figure}
 
 \subsubsection*{Optimal Lambda}
 
 \subsection*{Conclusions}
+Compare same lambda values of two implementations.
 Discuss two methods, compare with each other.
 \end{document}
  
