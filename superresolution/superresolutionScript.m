@@ -3,6 +3,8 @@ clear all;
 close all;
 clc;
 SHOW_COSTS = true;
+DRAW_RESULTS = false;
+
 %img_name = 'fruits';
 img_name = 'grass_small';
 im = imread([img_name, '.png']);
@@ -31,7 +33,7 @@ D = sparse(rows,cols,vals,MD*ND,M*N);
 % (the low resolution thingy)
 g = reshape(D*im(:),M/SRfactor,N/SRfactor);
 
-lambdas = [10, 50, 100, 500, 1000:1000:20000];
+lambdas = 1000; %[10, 50, 100, 500, 1000:1000:20000];
 
 SSEs = zeros(size(lambdas));
 ssim_vals = zeros(size(lambdas));
@@ -43,29 +45,34 @@ for i = 1:length(lambdas)
     if SHOW_COSTS
         figure;
         plot(costs);
-        title(['Lambda=', num2str(lambda)]);
+        title(['Energy for Lambda=', num2str(lambda)]);
     end
-    figure;
-    title(['Resize factor: ', num2str(SRfactor)]);
-    % top left: reconstructed thing
-    % top right: upsampled img using "nearest" operator
-    % bot left: diff to nearest
-    % bot right: original image
+    % For plotting later on
     error = (uG - im).^2;
     ssim_vals(i) = ssim(uG, im);
     SSEs(i) = sum(error(:));
     fprintf('Lambda = %f, SSD: %f, SSIM: %f, iterations=%i \n', ...
         lambda, SSEs(i), ssim_vals(i), iterations)
-    displayed_images = [uG, nearest; ...
-                        10 * error, im];
+
+    if (DRAW_RESULTS)
+        figure;
+        title(['Resize factor: ', num2str(SRfactor)]);
+        % top left: reconstructed thing
+        % top right: upsampled img using "nearest" operator
+        % bot left: diff to nearest
+        % bot right: original image
+        displayed_images = [uG, nearest; ...
+                            10 * error, im];
+        imshow(displayed_images);
+    end
     imwrite(uG, sprintf('%s_lambda_%i.png', img_name, lambda));         
-    %imshow(displayed_images);
     drawnow
 end
 %% Visualize error under different lambdas
 error_nearest = (nearest - im).^2;
-
-figure, plot(lambdas, SSEs, ...
-    lambdas, repmat(sum(error_nearest(:)), size(SSEs)));
-xlabel('Lambda');
-ylabel('SSD');
+if length(lambdas) > 1
+    figure, plot(lambdas, SSEs, ...
+        lambdas, repmat(sum(error_nearest(:)), size(SSEs)));
+    xlabel('Lambda');
+    ylabel('SSD');
+end
