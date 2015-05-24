@@ -151,7 +151,7 @@ occurs in Equation \eqref{eq:two_norm_proximity_used} TODO: either fully derive 
 	&= \arg \min_x P(x)
 \end{align}
 This can be solved by deriving and setting to zero:
-\begin{align*}
+\begin{align}
 \frac{\partial}{\partial x} P(x) &= 
 	\frac{\partial}{\partial x} \left(
  		\frac{1}{2} \twonorm{x - \frac{z}{\lambda}}^2 +
@@ -174,7 +174,7 @@ This can be solved by deriving and setting to zero:
 	x-\frac{z}{\lambda} + 
 	\frac{1}{\lambda} \frac{x}{\twonorm{x}} \overset{!}{=} 0 
 	\label{eq:proximity_operator_l2_norm_fail}
-\end{align*}
+\end{align}
 Since we can not easily solve Equation \eqref{eq:proximity_operator_l2_norm_fail} for $x$, we need to express $P(x)$ as defined in \eqref{eq:P_x} in a more convenient form.
 \begin{align}
 todo
@@ -245,11 +245,17 @@ x^{n+1} &= (I + \tau \lambda D)^{-1}
 and are ready for doing our implementation.
 
 \subsection*{Implementation}
-
+I chose the following parameters for my implementation
+\begin{align}
+	K_a 	&= 8 \\
+	\sigma 	&= 0.001 \\
+	\tau  	&= \frac{1}{K_a \cdot \tau}
+	\label{eq:tau}
+\end{align}
 \subsubsection*{Iteration count}
 The number of iterations needed is heavily dependent on lambda. 
 Smaller lambdas need much longer to converge than larger ones. 
-The behavior of the energy function in both cases is visible in Figure \ref{fig:energy_plots}. 
+The behavior of the energy function for both cases is visible in Figure \ref{fig:energy_plots}. 
 Some intermediary images for a small lambda can be seen in Figure \ref{fig:iteration_count_lambda_50}, for a large lambda in Figure \ref{fig:iteration_count_lambda_1000}.
 \begin{figure}[ht!]%
 \centering
@@ -292,8 +298,8 @@ minor changes. The lambda was set to 1000 for these images.}
 As in the previous assignment, the lambda defines the smoothness of the converged
 solution. Surprisingly, I could increase lambda very high without the quality deteriorating.
 With smaller lambdas ($ \lambda < 100 $), the algorithm did not converge anymore,
-with default parameters, so I adapted my implementation to choose tau accordingly
-to lambda:
+with default parameters, so I adapted my implementation to choose 
+$\tau$ from Equation \ref{eq:tau} according to lambda:
 \begin{equation}
 	\tau_\lambda = 
 	\begin{cases} 
@@ -313,8 +319,12 @@ to lambda:
 \caption{Various resulting images with different lambdas after 1000 iterations.}
 \label{fig:lambdas}
 \end{figure}
+\clearpage
 
 \subsubsection*{Optimal Lambda}
+As already in the previous assignment, I could not find an upper bound to lambda where it starts to worsen again. But as visible in Figure \ref{fig:lambda_vs_ssd}, the SSD stays
+constant after $\lambda=1000$.
+
 \begin{figure}[ht!]%
 \centering
 \includegraphics[width=0.9\textwidth]{lambda_vs_ssd.png}
@@ -324,8 +334,11 @@ SSD of the image obtained through nearest-neighbor scaling was added (green line
 \end{figure}
 
 \subsection*{Conclusions}
-Compare same lambda values of two implementations.
-Discuss two methods, compare with each other.
+While computational cost of one single iteration is larger is larger 
+in the primal dual method, the number of iterations used until convergence 
+is much lower. The convergence much trickier to achieve for the primal dual problem,
+since there are more parameters to tune there. For super resolution it took 
+quite some time to find acceptable values.
 \end{document}
  
  
