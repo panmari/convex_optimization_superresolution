@@ -142,7 +142,7 @@ using Moreau's Identity in step \eqref{eq:moreaus_identity_used} which is define
 	\prox_{\lambda F^*}(z) = z - \lambda \cdot \prox_{F/ \lambda}(z / \lambda) 
 \end{equation}
 Now, we need to compute the proximity operator of the two norm as it 
-occurs in Equation \eqref{eq:two_norm_proximity_used} TODO: either fully derive or delete.
+occurs in Equation \eqref{eq:two_norm_proximity_used}.
 \begin{align}
 	\prox_{\twonorm{\cdot} / \lambda}(z / \lambda) 
 	&= \arg \min_x \frac{1}{2} \twonorm{x - \frac{z}{\lambda}}^2 +
@@ -175,11 +175,10 @@ This can be solved by deriving and setting to zero:
 	\frac{1}{\lambda} \frac{x}{\twonorm{x}} \overset{!}{=} 0 
 	\label{eq:proximity_operator_l2_norm_fail}
 \end{align}
-Since we can not easily solve Equation \eqref{eq:proximity_operator_l2_norm_fail} for $x$, we need to express $P(x)$ as defined in \eqref{eq:P_x} in a more convenient form.
-\begin{align}
-todo
-\end{align}
-So we end up with
+Since we can not easily solve Equation \eqref{eq:proximity_operator_l2_norm_fail} for $x$, 
+we need to express $P(x)$ as defined in \eqref{eq:P_x} in a more convenient form, e. g. express $x$ 
+as composition of its direction and magnitude. 
+Eventually we end up with
 \begin{equation}
 	\prox_{\twonorm{\cdot} / \lambda}(z / \lambda) =
 	z / \lambda \cdot \max \left(0 , 1 - \frac{1}{\twonorm{z}} \right)
@@ -224,12 +223,12 @@ found value is the minimum.
 \tau \lambda D(m - g) \\
 &= m - x^n + \tau \nabla^* y^{n+1} +
 \tau \lambda Dm - \tau \lambda D g \\
-&= (I + \tau \lambda D)m - x^n + \tau \nabla^* y^{n+1} +
+&= (I + \tau \lambda D)m - x^n + \tau \nabla^* y^{n+1} -
 \tau \lambda D g \overset{!}{=} 0 \\
 \Longleftrightarrow m &= (I + \tau \lambda D)^{-1} 
 (x^n - \tau \nabla^* y^{n+1} + \tau \lambda D g)
  \\
-&=  (I + \tau \lambda D)^{-1} (x^n + \tau \nabla y^{n+1} + \tau \lambda D g) \\
+&=  (I + \tau \lambda D)^{-1} (x^n + \tau \nabla \cdot y^{n+1} + \tau \lambda D g) \\
 &= x^{n+1}
 \end{align}
 
@@ -248,9 +247,9 @@ and are ready for doing our implementation.
 I chose the following parameters for my implementation
 \begin{align}
 	K_a 	&= 8 \\
-	\sigma 	&= 0.001 \\
-	\tau  	&= \frac{1}{K_a \cdot \tau}
-	\label{eq:tau}
+	\tau 	&= 0.001 \label{eq:tau} \\
+	\sigma  &= \frac{1}{K_a \cdot \tau} \\
+	\theta  &= 1
 \end{align}
 \subsubsection*{Iteration count}
 The number of iterations needed is heavily dependent on lambda. 
@@ -322,8 +321,7 @@ $\tau$ from Equation \ref{eq:tau} according to lambda:
 \clearpage
 
 \subsubsection*{Optimal Lambda}
-As already in the previous assignment, I could not find an upper bound to lambda where it starts to worsen again. But as visible in Figure \ref{fig:lambda_vs_ssd}, the SSD stays
-constant after $\lambda=1000$.
+As already in the previous assignment, I could not find an upper bound to lambda where it starts to worsen again. But as visible in Figure \ref{fig:lambda_vs_ssd}, the SSD only decreases marginally after $\lambda=1000$.
 
 \begin{figure}[ht!]%
 \centering
