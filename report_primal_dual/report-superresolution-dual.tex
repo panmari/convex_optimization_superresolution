@@ -242,7 +242,7 @@ x^{n+1} &= (I + \tau \lambda D)^{-1}
 \bar{x}^{n+1} &= x^{n+1} + \theta(x^{n+1} - x^n)
 \end{align}
 and are ready for doing our implementation.
-
+\clearpage
 \subsection*{Implementation}
 I chose the following parameters for my implementation
 \begin{align}
@@ -250,6 +250,12 @@ I chose the following parameters for my implementation
 	\tau 	&= 0.001 \label{eq:tau} \\
 	\sigma  &= \frac{1}{K_a \cdot \tau} \\
 	\theta  &= 1
+\end{align}
+and as initialization
+\begin{align}
+	x^0 &= 0 \\
+	y^0 &= 0 \\
+	\bar{x}^{0} &= D^T g
 \end{align}
 \subsubsection*{Iteration count}
 The number of iterations needed is heavily dependent on lambda. 
@@ -295,8 +301,8 @@ minor changes. The lambda was set to 1000 for these images.}
 
 \subsubsection*{Effect of Lambda}
 As in the previous assignment, the lambda defines the smoothness of the converged
-solution. Surprisingly, I could increase lambda very high without the quality deteriorating.
-With smaller lambdas ($ \lambda < 100 $), the algorithm did not converge anymore,
+solution. Surprisingly, I could increase lambda to very large values without the quality deteriorating.
+With smaller lambdas ($ \lambda < 100 $), the algorithm did not converge anymore
 with default parameters, so I adapted my implementation to choose 
 $\tau$ from Equation \ref{eq:tau} according to lambda:
 \begin{equation}
@@ -315,7 +321,8 @@ $\tau$ from Equation \ref{eq:tau} according to lambda:
 \subfigure[$\lambda = 2000$]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_2000.png}} 
 \subfigure[$\lambda = 5000$]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_5000.png}} 
 \subfigure[$\lambda = 10000$]{\includegraphics[width=0.32\textwidth]{grass_small_lambda_10000.png}} 
-\caption{Various resulting images with different lambdas after 1000 iterations.}
+\caption{Various resulting images with different lambdas after 1000 iterations. The high
+amount of iterations was chosen to make sure the solution is converged.}
 \label{fig:lambdas}
 \end{figure}
 \clearpage
