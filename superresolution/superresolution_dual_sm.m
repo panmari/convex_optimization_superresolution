@@ -1,4 +1,4 @@
-function [u, i, costs] = superresolution_dual_sm(g, D, lambda, norm_used, img_name)
+function [u, i, costs] = superresolution_dual_sm(g, D, lambda, img_name)
 % input: g: double gray scaled image
 %        D: downscaling matrix
 %        lambda: parameter % output: u: inpainted image
@@ -14,7 +14,7 @@ M = MD / SRfactor;
 N = ND / SRfactor;
 
 % Constants
-% K_a is upper bound.
+% K_a is upper bound, 8 is a good choice.
 K_a = 8;
 % Should be rather small
 tau = 1e-3; 
@@ -30,7 +30,6 @@ theta = 1;
 % Initialize all variables.
 y_n = zeros(M, N, 2);
 x_n = zeros(M, N);
-% TODO: better initial guess?
 xbar_n = reshape(D' * g(:), M, N);
 DTD = D' * D;
 % Used for computing x_n1, instead of inverting it here we use slash
@@ -38,7 +37,7 @@ DTD = D' * D;
 x_n1_matrix = speye(size(DTD)) + tau * lambda * DTD;
 %x_n1_divisor = inv(x_n1_matrix);
 x_n1_right_summand = reshape(tau * lambda * D' * g(:), M, N);
-% Maximum number of iterations learnt
+% Maximum number of iterations, 300 is enough for all lambdas tested.
 max_iterations = 300;
 % For displaying changes in costs later on.
 costs = zeros(max_iterations,1);
@@ -67,17 +66,20 @@ for i=1:max_iterations
     end
     xbar_n = xbar_n1;
 
-    costs(i) = energy_term_for(xbar_n, g, D, lambda);
+    costs(i) = compute_energy(xbar_n, g, D, lambda);
 end
 u = reshape(xbar_n,M,N);
 end
 
-function E_u = energy_term_for(u, g, D, lambda)
+% Computes the energy for the given terms.
+function E = compute_energy(u, g, D, lambda)
     similarity = D * u(:) - g(:);
     smoothness = gradient(u, true);
+    % TV Norm for smoothness
     smoothness_sqr = smoothness.^2;
     smoothness_energy = sum(sqrt(smoothness_sqr(:)));
-    E_u = (lambda*0.5)*l2_norm(similarity) + smoothness_energy;
+    % Sum up data and smoothness terms 
+    E = (lambda*0.5)*l2_norm(similarity) + smoothness_energy;
 end
 
 % Computes the l2 norm of a matrix/vector, i. e. squares every element,

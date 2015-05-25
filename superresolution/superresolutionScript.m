@@ -41,7 +41,7 @@ nearest = imresize(g,[M N],'nearest');
 
 for i = 1:length(lambdas)
     lambda = lambdas(i);
-    [uG, iterations, costs] = superresolution_dual_sm(g,D,lambda, 2, img_name);
+    [uG, iterations, costs] = superresolution_dual_sm(g,D,lambda, img_name);
     if SHOW_COSTS
         f = figure;
         plot(costs);
