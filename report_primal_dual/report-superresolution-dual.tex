@@ -343,7 +343,22 @@ While computational cost of one single iteration is larger is larger
 in the primal dual method, the number of iterations used until convergence 
 is much lower. The convergence much trickier to achieve for the primal dual problem,
 since there are more parameters to tune there. For super resolution it took 
-quite some time to find acceptable values.
+quite some time to find acceptable values. 
+The converged results were almost the same with an SSD of $0.7646$ at $\lambda = 1000$.
+The deviation does not seem to be caused by a boundary effect, as can be seen
+by the visualisation of the error in Figure \ref{fig:gradient_descent_vs_primal_dual}.
+\begin{figure}[ht!]%
+\centering
+\subfigure[Ground truth]{
+\includegraphics[width=0.9\textwidth]{grass_small.png}
+}
+\subfigure[SSD of results obtained trough gradient descent and primal dual method]{
+\includegraphics[width=0.9\textwidth]{gradient_descent_vs_primal_dual_lambda_1000.png}
+}
+\caption{SSD scaled by 1000 between the image obtained through gradient descent and one obtained
+through the primal dual method. The most deviation is in places with edges. }
+\label{fig:gradient_descent_vs_primal_dual}
+\end{figure}
 \end{document}
  
  
